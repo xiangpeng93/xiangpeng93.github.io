@@ -1,19 +1,18 @@
-const resolve = require('path').resolve
-const webpack = require('webpack')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const url = require('url')
-const publicPath = ''
+var path = require('path')
+var webpack = require('webpack')
 
-module.exports = (options = {}) => ({
-  entry: {
-    vendor: './src/vendor',
-    index: './src/main.js'
-  },
+module.exports = {
+  entry: './src/main.js',
   output: {
-    path: resolve(__dirname, 'dist'),
-    filename: options.dev ? '[name].js' : '[name].js?[chunkhash]',
-    chunkFilename: '[id].js?[chunkhash]',
-    publicPath: options.dev ? '/assets/' : publicPath
+    path: path.resolve(__dirname, './dist'),
+    publicPath: '/dist/',
+    filename: 'build.js'
+  },
+  resolve: {
+    alias: {
+      '~': path.resolve(__dirname, 'src')
+    },
+    extensions: ['.js', '.vue', '.json', '.css']
   },
   module: {
     rules: [{
@@ -40,35 +39,27 @@ module.exports = (options = {}) => ({
       }
     ]
   },
-  plugins: [
-    new webpack.optimize.CommonsChunkPlugin({
-      names: ['vendor', 'manifest']
-    }),
-    new HtmlWebpackPlugin({
-      template: 'src/index.html'
-    })
-  ],
-  resolve: {
-    alias: {
-      '~': resolve(__dirname, 'src')
-    },
-    extensions: ['.js', '.vue', '.json', '.css']
-  },
   devServer: {
-    host: '127.0.0.1',
-    port: 8010,
-    proxy: {
-      '/api/': {
-        target: 'http://127.0.0.1:8080',
-        changeOrigin: true,
-        pathRewrite: {
-          '^/api': ''
-        }
-      }
-    },
-    historyApiFallback: {
-      index: url.parse(options.dev ? '/assets/' : publicPath).pathname
-    }
+    historyApiFallback: true,
+    noInfo: true
   },
-  devtool: options.dev ? '#eval-source-map' : '#source-map'
-})
+  devtool: '#eval-source-map'
+}
+
+if (process.env.NODE_ENV === 'production') {
+  module.exports.devtool = '#source-map'
+  // http://vue-loader.vuejs.org/en/workflow/production.html
+  module.exports.plugins = (module.exports.plugins || []).concat([
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: '"production"'
+      }
+    }),
+    new webpack.optimize.UglifyJsPlugin({
+      compress: {
+        warnings: false
+      }
+    }),
+    new webpack.optimize.OccurenceOrderPlugin()
+  ])
+}
