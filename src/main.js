@@ -1,28 +1,15 @@
 import Vue from 'vue/dist/vue.common.js'
-import routes from './routes'
+import router from './routes'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-
+import Router from 'vue-router'
+import Home from "./pages/Home.vue"
+import About from "./pages/About.vue"
 Vue.use(ElementUI)
+Vue.use(Router)
+console.log(router)
 
 const app = new Vue({
-  el: '#app',
-  data: {
-    currentRoute: window.location.pathname
-  },
-  computed: {
-    ViewComponent () {
-      const matchingView = routes[this.currentRoute]
-      return matchingView
-        ? require('./pages/' + matchingView + '.vue')
-        : require('./pages/404.vue')
-    }
-  },
-  render (h) {
-    return h(this.ViewComponent)
-  }
-})
-
-window.addEventListener('popstate', () => {
-  app.currentRoute = window.location.pathname
+  el:"#app",
+  router
 })
