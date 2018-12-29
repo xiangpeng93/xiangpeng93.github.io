@@ -11,15 +11,5 @@ console.log(router)
 
 const app = new Vue({
 	el:"#app",
-	router,
-	data(){
-		return{
-			currentRoute : window.location.pathname
-		}
-	}
-})
-
-window.addEventListener('popstate', () => {
-	console.log(window.location.pathname)
-  app.currentRoute = window.location.pathname
+	router
 })
