@@ -13,7 +13,7 @@
 								<el-input v-model="userInfos.name"></el-input>
 							</el-form-item>
 							<el-form-item label="Password：">
-								<el-input v-model="userInfos.password"></el-input>
+								<el-input type="password" v-model="userInfos.password"></el-input>
 							</el-form-item>
 							<el-form-item align="right">
 								<el-button type="primary" align="center" style="width: 100px" @click="onSubmit">Login</el-button>
@@ -63,7 +63,9 @@
 		methods:{
 			onSubmit()
 			{
-
+				console.log("href to home");
+				window.location.href = '#/Home'
+				window.location.reload();
 			}
 		}
 	}

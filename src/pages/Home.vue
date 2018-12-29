@@ -17,23 +17,14 @@
 		<el-container>
 			<el-header style="height:auto;margin: 5px;">
 				<el-form :inline="true" :model="formInline" class="demo-form-inline">
-					<el-form-item label="审批人">
-						<el-input v-model="formInline.user" placeholder="审批人"></el-input>
-					</el-form-item>
-					<el-form-item label="活动区域">
-						<el-select v-model="formInline.region" placeholder="活动区域">
-							<el-option label="区域一" value="shanghai"></el-option>
-							<el-option label="区域二" value="beijing"></el-option>
-						</el-select>
-					</el-form-item>
 					<el-form-item>
-						<el-button type="primary" @click="onSubmit">查询</el-button>
+						<el-button type="primary" @click="onSubmit">添加人员</el-button>
 					</el-form-item>
 				</el-form>
 			</el-header>
 			<el-main>
 				<el-table
-				:data="tableData2"
+				:data="tableData2.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
 				style="width: 100%"
 				:row-class-name="tableRowClassName">
 				<el-table-column
@@ -50,10 +41,48 @@
 		prop="address"
 		label="地址">
 	</el-table-column>
+	<el-table-column
+	align="right">
+	<template slot="header" slot-scope="scope">
+		<el-input
+		v-model="search"
+		size="max"
+		placeholder="输入关键字搜索"
+		style="width: 200px"/>
+	</template>
+	<template slot-scope="scope">
+		<el-button
+		size="mini"
+		@click="handleEdit(scope.$index, scope.row)">Edit</el-button>
+		<el-button
+		size="mini"
+		type="danger"
+		@click="handleDelete(scope.$index, scope.row)">Delete</el-button>
+	</template>
+</el-table-column>
 </el-table>
+
 </el-main>
 </el-container>
 </el-container>
+
+<el-dialog title="收货地址" :visible.sync="dialogFormVisible">
+	<el-form :model="form" >
+		<el-form-item label="活动名称"   style="text-align: left;">
+			<el-input v-model="form.name" style="width: 300px"></el-input>
+		</el-form-item>
+		<el-form-item label="活动区域" align="left"   style="text-align: left">
+			<el-select v-model="form.region" placeholder="请选择活动区域" style="width: 300px">
+				<el-option label="区域一" value="shanghai"></el-option>
+				<el-option label="区域二" value="beijing"></el-option>
+			</el-select>
+		</el-form-item>
+	</el-form>
+	<div slot="footer" class="dialog-footer">
+		<el-button @click="dialogFormVisible = false">取 消</el-button>
+		<el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+	</div>
+</el-dialog>
 </main-layout>
 </template>
 
@@ -72,17 +101,24 @@
 		methods:{
 			onSubmit() {
 				console.log('submit!');
+				this.dialogFormVisible = true
 			},
 			tableRowClassName({row, rowIndex}) {
-				if (rowIndex === 1) {
+				if (rowIndex%2 === 1) {
 					return 'warning-row';
-				} else if (rowIndex === 3) {
-					return 'success-row';
+				} else if (rowIndex%2 === 0) {
+					return 'info-row';
 				}
 				return '';
 			},
 			handleNodeClick(data) {
-				console.log(data);
+				console.log(data.label);
+			},
+			handleEdit(index, row) {
+				console.log(index, row);
+			},
+			handleDelete(index, row) {
+				console.log(index, row);
 			},
 			filterNode(value, data) {
 				if (!value) return true;
@@ -91,6 +127,9 @@
 		},
 		data() {
 			return {
+				formLabelWidth: '100px',
+				dialogFormVisible:false,
+				search:'',
 				filterText:'',
 				formInline: {
 					user: '',
@@ -98,21 +137,31 @@
 				},
 				tableData2: [{
 					date: '2016-05-02',
-					name: '王小虎',
+					name: '王小虎1',
 					address: '上海市普陀区金沙江路 1518 弄',
 				}, {
 					date: '2016-05-04',
-					name: '王小虎',
+					name: '王小虎2',
 					address: '上海市普陀区金沙江路 1518 弄'
 				}, {
 					date: '2016-05-01',
-					name: '王小虎',
+					name: '王小虎3',
 					address: '上海市普陀区金沙江路 1518 弄',
 				}, {
 					date: '2016-05-03',
-					name: '王小虎',
+					name: '王小虎4',
 					address: '上海市普陀区金沙江路 1518 弄'
 				}],
+				form: {
+					name: '',
+					region: '',
+					date1: '',
+					date2: '',
+					delivery: false,
+					type: [],
+					resource: '',
+					desc: ''
+				},
 				data: [{
 					label: '一级 1',
 					children: [{
@@ -222,11 +271,11 @@
 	}
 </script>
 <style>
- .el-table .warning-row {
-    background: oldlace;
-  }
+.el-table .warning-row {
+	background: oldlace;
+}
 
-  .el-table .success-row {
-    background: #f0f9eb;
-  }
+.el-table .success-row {
+	background: #f0f1eb;
+}
 </style>
