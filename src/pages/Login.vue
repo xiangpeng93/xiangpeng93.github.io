@@ -8,7 +8,7 @@
 				<el-row :gutter="0">
 					<el-col :span="8"><div class="grid-content bg-purple"></div></el-col>
 					<el-col :span="8"><div class="grid-content bg-purple">
-						<el-form :label-position="labelPosition"  label-width="100px" :model="formLabelAlign">
+						<el-form :label-position="labelPosition"  label-width="100px" :model="userInfos">
 							<el-form-item label="UserName：">
 								<el-input v-model="userInfos.name"></el-input>
 							</el-form-item>

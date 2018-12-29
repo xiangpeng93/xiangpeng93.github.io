@@ -10,10 +10,11 @@
 </template>
 
 <script>
-
+	import routes from '../routes'
 	export default {
 		data() {
 			return {
+				currentRoute: window.location.pathname
 			};
 		},
 		methods: {

@@ -3,7 +3,7 @@ import About from "./pages/About.vue"
 import Login from "./pages/Login.vue"
 import Router from 'vue-router'
 export default new Router({
-  mode: 'history',
+  mode: 'hash',
   base: '/',
   routes:[
     {    
