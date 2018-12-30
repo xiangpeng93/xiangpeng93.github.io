@@ -2,10 +2,10 @@
 	<div style="height: 10vh">
 		<el-menu  :default-active="$route.path" class="el-menu-demo" mode="horizontal" @select="handleSelect"
 		router>
-		<el-menu-item index="#" align="center" style="width: 200px" ><i class="el-icon-edit"></i><b>XXXX系统</b></el-menu-item>
+		<el-menu-item index="#" align="center" style="width: 200px" ><i class="el-icon-document"></i><b>彭梦瑶的人事系统
+		</b></el-menu-item>
 		<el-menu-item index="/Home">人员组织信息</el-menu-item>
 		<el-menu-item index="/About">其他信息</el-menu-item>
-		
 		<el-submenu index="#" style="float:right;">
 			<template slot="title" ><i class="el-icon-service"></i>{{userName}}</template>
 			<el-menu-item index="#">个人信息</el-menu-item>
