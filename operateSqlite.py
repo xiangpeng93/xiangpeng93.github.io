@@ -10,7 +10,7 @@ def ConnectSqlite():
     if g_dict.has_key("conn"):
         print "connect ready."
         return
-    conn = sqlite3.connect('../chwy3.db')
+    conn = sqlite3.connect('chwy3.db')
     cursor = conn.cursor()
     g_dict["conn"] = conn
     g_dict["cursor"] = cursor
@@ -43,8 +43,6 @@ class COrganization:
             tmpOrg.ParentId = id
             self.SubOrgs.append(tmpOrg)
 
-
-
 def GetAllOrgFormOrgs(orgs,index):
     orgEles = []
     for org in orgs.SubOrgs:
@@ -52,11 +50,12 @@ def GetAllOrgFormOrgs(orgs,index):
         orgEle["label"] = org.Name
         orgEle["id"] = org.Id
         orgEles.append(orgEle)
-        print org.Id, org.Name.encode("utf-8") ,index
+##        print org.Id, org.Name.encode("utf-8") ,index
         orgEle["children"] = GetAllOrgFormOrgs(org,index+1)
     ##if orgEles.count > 0:
       ##  print orgEles
     return orgEles
+
 def GetOrgInfos():
     ConnectSqlite()
     c = COrganization(0)
@@ -64,8 +63,160 @@ def GetOrgInfos():
     data = json.dumps(GetAllOrgFormOrgs(c,0),ensure_ascii=False)
 
     CloseSqlite()
-    print data.encode("utf-8")
+    
     return data.encode('utf-8')
+def GetEmployeeInfosByProj(projName):
+    employeeInfosArray = []
+    ConnectSqlite()
+    sqlStr = "select * from Employees where projName = '"+ (projName)+"'"
+    sqlStr = sqlStr.encode('utf-8')
+##    print sqlStr
+    g_dict["cursor"].execute(sqlStr)
+    employeeInfos = g_dict["cursor"].fetchall();
+    for info in employeeInfos:
+        employeeInfo = {}
+        employeeInfo["companyName"] = info[1]
+        employeeInfo["projName"] = info[2]
+        employeeInfo["department"] = info[3]
+        employeeInfo["job"] = info[4]
+        employeeInfo["name"] = info[5]
+        employeeInfo["enterTime"] = info[6]
+        employeeInfo["salaryBegin"] = info[7]
+        employeeInfo["salaryStart"] = info[8]
+        employeeInfo["salaryChange"] = info[9]
+        employeeInfo["salaryCurrent"] = info[10]
+        employeeInfo["phoneNum"] = info[11]
+        employeeInfo["nation"] = info[12]
+        employeeInfo["marry"] = info[13]
+        employeeInfo["education"] = info[14]
+        employeeInfo["demobilized"] = info[15]
+        employeeInfo["bornTime"] = info[16]
+        employeeInfo["sex"] = info[17]
+        employeeInfo["age"] = info[18]
+        employeeInfo["zodiac"] = info[19]
+        employeeInfo["constellation"] = info[20]
+        employeeInfo["jobYear"] = info[21]
+        employeeInfo["household"] = info[22]
+        employeeInfo["personCard"] = info[23]
+        employeeInfo["housebase"] = info[24]
+
+        employeeInfo["personAddr"] = info[25]
+        employeeInfo["personCardUsed"] = info[26]
+        employeeInfo["isHouse"] = info[27]
+        employeeInfo["nowHouse"] = info[28]
+        employeeInfo["urgentName"] = info[29]
+        employeeInfo["urgentPhone"] = info[30]
+        employeeInfo["introductName"] = info[31]
+        employeeInfo["introductProj"] = info[32]
+        employeeInfo["leaveTime"] = info[33]
+        employeeInfo["leaveReason"] = info[34]
+        employeeInfo["contractBegin"] = info[35]
+        employeeInfo["contractYear"] = info[36]
+        employeeInfo["contractEnd"] = info[37]
+        employeeInfo["isSecurity"] = info[38]
+        employeeInfo["securitySituation"] = info[39]
+        employeeInfo["remarks"] = info[40]
+        employeeInfosArray.append(employeeInfo)
+    CloseSqlite()
+    return employeeInfosArray
+
+def GetEmployeeInfos(projName,departmentName):
+    employeeInfosArray = []
+    ConnectSqlite()
+    sqlStr = "select * from Employees where department = '"+  (departmentName)+ "' and projName = '"+ (projName)+"'"
+    sqlStr = sqlStr.encode('utf-8')
+##    print sqlStr
+    g_dict["cursor"].execute(sqlStr)
+    employeeInfos = g_dict["cursor"].fetchall();
+    for info in employeeInfos:
+        employeeInfo = {}
+        employeeInfo["companyName"] = info[1]
+        employeeInfo["projName"] = info[2]
+        employeeInfo["department"] = info[3]
+        employeeInfo["job"] = info[4]
+        employeeInfo["name"] = info[5]
+        employeeInfo["enterTime"] = info[6]
+        employeeInfo["salaryBegin"] = info[7]
+        employeeInfo["salaryStart"] = info[8]
+        employeeInfo["salaryChange"] = info[9]
+        employeeInfo["salaryCurrent"] = info[10]
+        employeeInfo["phoneNum"] = info[11]
+        employeeInfo["nation"] = info[12]
+        employeeInfo["marry"] = info[13]
+        employeeInfo["education"] = info[14]
+        employeeInfo["demobilized"] = info[15]
+        employeeInfo["bornTime"] = info[16]
+        employeeInfo["sex"] = info[17]
+        employeeInfo["age"] = info[18]
+        employeeInfo["zodiac"] = info[19]
+        employeeInfo["constellation"] = info[20]
+        employeeInfo["jobYear"] = info[21]
+        employeeInfo["household"] = info[22]
+        employeeInfo["personCard"] = info[23]
+        employeeInfo["housebase"] = info[24]
+
+        employeeInfo["personAddr"] = info[25]
+        employeeInfo["personCardUsed"] = info[26]
+        employeeInfo["isHouse"] = info[27]
+        employeeInfo["nowHouse"] = info[28]
+        employeeInfo["urgentName"] = info[29]
+        employeeInfo["urgentPhone"] = info[30]
+        employeeInfo["introductName"] = info[31]
+        employeeInfo["introductProj"] = info[32]
+        employeeInfo["leaveTime"] = info[33]
+        employeeInfo["leaveReason"] = info[34]
+        employeeInfo["contractBegin"] = info[35]
+        employeeInfo["contractYear"] = info[36]
+        employeeInfo["contractEnd"] = info[37]
+        employeeInfo["isSecurity"] = info[38]
+        employeeInfo["securitySituation"] = info[39]
+        employeeInfo["remarks"] = info[40]
+        employeeInfosArray.append(employeeInfo)
+    CloseSqlite()
+    return employeeInfosArray
+
+import random
+
+def LoginUserInfo(name,passwd):
+    ConnectSqlite()
+    strRet = str(random.uniform(100000000,1000000000))
+    sqlStr = "select * from UserInfos where name = '%s' and passwd = '%s' "%(name,passwd)
+    sqlStr = sqlStr.encode('utf-8')
+    g_dict["cursor"].execute(sqlStr)
+    userInfos = g_dict["cursor"].fetchall();
+    print userInfos
+    if len(userInfos) == 0:
+        strRet = ""
+    for info in userInfos:
+        sqlUpdate = "update UserInfos set session = '%s'  where name = '%s' "%(strRet,name)
+        sqlUpdate = sqlUpdate.encode('utf-8')
+        g_dict["cursor"].execute(sqlUpdate)
+        g_dict["conn"].commit()
+        print sqlUpdate
+    CloseSqlite()
+    return strRet
+
+def CheckUserSession(name,session):
+    ConnectSqlite()
+    sqlStr = "select * from UserInfos where name = '%s' and session = '%s' "%(name,session)
+    sqlStr = sqlStr.encode('utf-8')
+    g_dict["cursor"].execute(sqlStr)
+    userInfos = g_dict["cursor"].fetchall();
+    if len(userInfos) == 0:
+        strRet = "FAILED"
+    CloseSqlite()
+    return 'OK'
+
+def ChangePasswd(name,passwd):
+    ConnectSqlite()
+    sqlUpdate = "update UserInfos set passwd = '%s'  where name = '%s' "%(passwd,name)
+    sqlUpdate = sqlUpdate.encode('utf-8')
+    g_dict["cursor"].execute(sqlUpdate)
+    g_dict["conn"].commit()
+    CloseSqlite()
+    return 'OK'
+
+ChangePasswd('pmy','1234')
 
 from BaseHTTPServer import BaseHTTPRequestHandler
 import cgi
@@ -75,29 +226,60 @@ import urlparse
 class TodoHandler(BaseHTTPRequestHandler):
     # Global instance to store todos. You should use a database in reality.
     TODOS = []
- 
     def do_GET(self):
-        # return all todos
-        #if self.path != '/':
-        #    self.send_error(404, "File not found.")
-        #    return
-        print self.path
-        if self.path.find('?'):
-            print self.path[2:]
-            self.path = self.path[2:]
-        dictParam = urlparse.parse_qs(self.path)
-        #funcname = self.headers['callback']
-        #print(funcname)
+        urlResult = urlparse.urlparse(self.path)
+        dictParam = urlparse.parse_qs(urlResult.query)
+        print urlResult,dictParam
         
         self.send_response(200)
         self.send_header('Content-type', 'application/json')
         self.end_headers()
 
         #print data.encode('utf-8')
-        content = '%s(%s)'%(dictParam["callback"][0],GetOrgInfos())
-        print content
-        self.wfile.write(content)
- 
+        if urlResult.path == "/getOrgs":
+            content = "";
+            if CheckUserSession(dictParam["name"][0],dictParam["session"][0]) != "OK":
+                content = '%s(%s)'%(dictParam["callback"][0],"")
+                print 'check username and sersseion',dictParam["name"][0],dictParam["session"][0]
+            else:
+                content = '%s(%s)'%(dictParam["callback"][0],GetOrgInfos())
+            self.wfile.write(content)
+        elif urlResult.path == "/getEmployees":
+            content = "";
+            if CheckUserSession(dictParam["name"][0],dictParam["session"][0]) != "OK":
+                content = '%s(%s)'%(dictParam["callback"][0],"")
+                print 'check username and sersseion',dictParam["name"][0],dictParam["session"][0]
+            else:
+                departmentName = dictParam["department"][0].decode('utf-8')
+                projName = dictParam["proj"][0].decode('utf-8')
+                data = json.dumps(GetEmployeeInfos(projName,departmentName),ensure_ascii=False)
+                if data == '[]':
+                    print "try to get proj employees"
+                    data = json.dumps(GetEmployeeInfosByProj(departmentName),ensure_ascii=False)
+    ##            print data
+                content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
+            self.wfile.write(content)
+        elif urlResult.path == "/login":
+            userName = dictParam["name"][0].decode('utf-8')
+            userPasswd = dictParam["passwd"][0].decode('utf-8')
+            session = LoginUserInfo(userName,userPasswd)
+            retDict = {};
+            retDict["session"] = session;
+            data = json.dumps(retDict,ensure_ascii=False)
+            content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
+            self.wfile.write(content)
+        elif urlResult.path == "/changePaswwd":
+            content = "";
+            if CheckUserSession(dictParam["name"][0],dictParam["session"][0]) != "OK":
+                content = '%s(%s)'%(dictParam["callback"][0],"")
+                print 'check username and sersseion',dictParam["name"][0],dictParam["session"][0]
+            else:
+                userName = dictParam["name"][0].decode('utf-8')
+                userPasswd = dictParam["passwd"][0].decode('utf-8')
+                ChangePasswd(userPasswd,userName)
+                content = '%s(%s)'%(dictParam["callback"][0],"OK")
+            self.wfile.write(content)
+            
     def do_POST(self):
         ctype, pdict = cgi.parse_header(self.headers['content-type'])
         if ctype == 'application/json':
