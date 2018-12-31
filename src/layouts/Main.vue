@@ -4,7 +4,7 @@
             <el-menu-item index="#" align="center" style="width: 200px"><i class="el-icon-document"></i><b>彭梦瑶的人事系统
 		</b></el-menu-item>
             <el-menu-item index="/Home">人员组织信息</el-menu-item>
-            <el-menu-item index="/About">其他信息</el-menu-item>
+            <!--  <el-menu-item index="/About">其他信息</el-menu-item> -->
             <el-submenu index="#" style="float:right;">
                 <template slot="title"><i class="el-icon-service"></i>{{userName}}</template>
                 <el-menu-item index="#changePasswd">修改密码</el-menu-item>
@@ -12,29 +12,72 @@
             </el-submenu>
         </el-menu>
         <slot></slot>
+        <el-dialog title="修改密码" :visible.sync="dialogFormVisible" width="30%">
+            <el-form>
+                <el-form-item label="用户名称：" :label-width="formLabelWidth">
+                    <el-input v-model="userName" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="新密码：" :label-width="formLabelWidth">
+                    <el-input v-model="userPasswd" autocomplete="off"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="dialogFormVisible = false">取 消</el-button>
+                <el-button type="primary" @click="changePasswd">确 定</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 <script>
 export default {
     data() {
         return {
-            userName: ""
+            userName: "",
+            userPasswd: '',
+            userSession: '',
+            dialogFormVisible: false,
+            formLabelWidth: '100px',
+            host:'http://47.75.127.61:9608'
         };
     },
     mounted: function() {
         this.userName = this.getCookie('name')
+        this.userSession = this.getCookie('session')
     },
     methods: {
         handleSelect(key, keyPath) {
             console.log(key, keyPath);
-            if (key === '/')
-            {
-            	this.logout()
+            if (key === '/') {
+                this.logout()
             }
-            if (key === '#changePasswd')
-            {
-
+            if (key == '#changePasswd') {
+                this.dialogFormVisible = true
             }
+        },
+        changePasswd() {
+            //发送get请求
+            this.$http.jsonp(this.host+"/changePaswwd", {
+                params: {
+                    "name": this.userName,
+                    "passwd": this.userPasswd,
+                    'session': this.userSession
+                }
+            }).then(function(res) {
+                console.log(res.data);
+                if (res.data["result"] === "OK") {
+                    this.$message({
+                        message: '密码修改成功，请重新登陆。',
+                        type: 'success'
+                    });
+                    this.logout();
+                }
+                else
+                {
+                	this.$message.error('密码修改失败！');
+                }
+            }, function(res) {
+                console.warn(res);
+            })
         },
         logout() {
             this.setCookie('name', '');

@@ -19,7 +19,7 @@
                                     <el-input type="password" v-model="userInfos.password"></el-input>
                                 </el-form-item>
                                 <el-form-item align="right">
-                                    <el-button type="primary" align="center" style="width: 100px" @click="onSubmit">Login</el-button>
+                                    <el-button type="primary" align="center" style="width: 100px" @click="onSubmit"> 登陆 </el-button>
                                 </el-form-item>
                             </el-form>
                         </div>
@@ -68,14 +68,15 @@ export default {
                 name: '',
                 password: '',
                 type: ''
-            }
+            },
+            host:'http://47.75.127.61:9608'
         }
     },
     methods: {
         onSubmit() {
             console.log("check user info");
             //发送get请求
-            this.$http.jsonp("http://127.0.0.1:8888/login", {
+            this.$http.jsonp(this.host+"/login", {
                 params: {
                     "name": this.userInfos.name,
                     "passwd": this.userInfos.password

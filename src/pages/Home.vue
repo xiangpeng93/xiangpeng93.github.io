@@ -47,7 +47,7 @@
                 </el-main>
             </el-container>
         </el-container>
-        <el-dialog title="雇员信息" :visible.sync="dialogFormVisible" align="left" width="80%">
+        <el-dialog title="雇员信息" :visible.sync="dialogFormVisible" align="left" width="90%" top="5vh">
             <el-form :model="employeeForm">
                 <el-row :gutter="10">
                     <el-col :span="6">
@@ -385,7 +385,7 @@ export default {
         this.userSession = this.getCookie('session')
         console.log(this.userName,this.userSession);
         //发送get请求
-        this.$http.jsonp("http://127.0.0.1:8888/getOrgs", {
+        this.$http.jsonp(this.host+"/getOrgs", {
                 params: {
                     "name": this.userName,
                     "session": this.userSession
@@ -394,13 +394,13 @@ export default {
             console.log(res);
             this.data = res.data;
         }, function(res) {
-            //this.transToLogin()
+            this.transToLogin()
             console.warn(res);
         })
     },
     methods: {
         getEmployeesInfo() {
-            this.$http.jsonp("http://127.0.0.1:8888/getEmployees", {
+            this.$http.jsonp(this.host+"/getEmployees", {
                 params: {
                     "department": this.currentDepartment,
                     "proj": this.currentProj,
@@ -448,8 +448,7 @@ export default {
         transToLogin() {
             window.location.href = '#/'
             window.location.reload();
-        }
-        ,
+        },
         getCookie(c_name) {
             if (document.cookie.length > 0) {
                 var c_start = document.cookie.indexOf(c_name + "=")
@@ -465,6 +464,7 @@ export default {
     },
     data() {
         return {
+            host:'http://47.75.127.61:9608',
             userName:"",
             userSession:"",
             labelWidth: "120px",

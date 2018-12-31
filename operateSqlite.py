@@ -70,7 +70,7 @@ def GetEmployeeInfosByProj(projName):
     ConnectSqlite()
     sqlStr = "select * from Employees where projName = '"+ (projName)+"'"
     sqlStr = sqlStr.encode('utf-8')
-##    print sqlStr
+    print u'通过项目组织查询雇员信息：',sqlStr
     g_dict["cursor"].execute(sqlStr)
     employeeInfos = g_dict["cursor"].fetchall();
     for info in employeeInfos:
@@ -125,7 +125,7 @@ def GetEmployeeInfos(projName,departmentName):
     ConnectSqlite()
     sqlStr = "select * from Employees where department = '"+  (departmentName)+ "' and projName = '"+ (projName)+"'"
     sqlStr = sqlStr.encode('utf-8')
-##    print sqlStr
+    print u'通过部门和组织查询雇员信息：',sqlStr
     g_dict["cursor"].execute(sqlStr)
     employeeInfos = g_dict["cursor"].fetchall();
     for info in employeeInfos:
@@ -184,7 +184,6 @@ def LoginUserInfo(name,passwd):
     sqlStr = sqlStr.encode('utf-8')
     g_dict["cursor"].execute(sqlStr)
     userInfos = g_dict["cursor"].fetchall();
-    print userInfos
     if len(userInfos) == 0:
         strRet = ""
     for info in userInfos:
@@ -192,7 +191,7 @@ def LoginUserInfo(name,passwd):
         sqlUpdate = sqlUpdate.encode('utf-8')
         g_dict["cursor"].execute(sqlUpdate)
         g_dict["conn"].commit()
-        print sqlUpdate
+        print u"登陆用户 ：",sqlUpdate,name,passwd
     CloseSqlite()
     return strRet
 
@@ -200,23 +199,26 @@ def CheckUserSession(name,session):
     ConnectSqlite()
     sqlStr = "select * from UserInfos where name = '%s' and session = '%s' "%(name,session)
     sqlStr = sqlStr.encode('utf-8')
+    print u"校验用户 ：",sqlStr
     g_dict["cursor"].execute(sqlStr)
     userInfos = g_dict["cursor"].fetchall();
     if len(userInfos) == 0:
         strRet = "FAILED"
+        print u'校验失败',name,session
     CloseSqlite()
+    print u'校验成功',name,session
     return 'OK'
 
 def ChangePasswd(name,passwd):
     ConnectSqlite()
-    sqlUpdate = "update UserInfos set passwd = '%s'  where name = '%s' "%(passwd,name)
+    sqlUpdate = "update UserInfos set passwd = '%s' ,session = 'XXXX' where name = '%s' "%(passwd,name)
     sqlUpdate = sqlUpdate.encode('utf-8')
+    print u'修改密码',sqlUpdate,name,passwd
     g_dict["cursor"].execute(sqlUpdate)
     g_dict["conn"].commit()
     CloseSqlite()
     return 'OK'
 
-ChangePasswd('pmy','1234')
 
 from BaseHTTPServer import BaseHTTPRequestHandler
 import cgi
@@ -224,61 +226,67 @@ import json
 import urlparse
  
 class TodoHandler(BaseHTTPRequestHandler):
-    # Global instance to store todos. You should use a database in reality.
     TODOS = []
     def do_GET(self):
-        urlResult = urlparse.urlparse(self.path)
-        dictParam = urlparse.parse_qs(urlResult.query)
-        print urlResult,dictParam
-        
-        self.send_response(200)
-        self.send_header('Content-type', 'application/json')
-        self.end_headers()
+        try:
+            urlResult = urlparse.urlparse(self.path)
+            dictParam = urlparse.parse_qs(urlResult.query)
+            print u'新Get请求进入:','路径为：',self.path
+            print urlResult,dictParam
+            
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
 
-        #print data.encode('utf-8')
-        if urlResult.path == "/getOrgs":
-            content = "";
-            if CheckUserSession(dictParam["name"][0],dictParam["session"][0]) != "OK":
-                content = '%s(%s)'%(dictParam["callback"][0],"")
-                print 'check username and sersseion',dictParam["name"][0],dictParam["session"][0]
-            else:
-                content = '%s(%s)'%(dictParam["callback"][0],GetOrgInfos())
-            self.wfile.write(content)
-        elif urlResult.path == "/getEmployees":
-            content = "";
-            if CheckUserSession(dictParam["name"][0],dictParam["session"][0]) != "OK":
-                content = '%s(%s)'%(dictParam["callback"][0],"")
-                print 'check username and sersseion',dictParam["name"][0],dictParam["session"][0]
-            else:
-                departmentName = dictParam["department"][0].decode('utf-8')
-                projName = dictParam["proj"][0].decode('utf-8')
-                data = json.dumps(GetEmployeeInfos(projName,departmentName),ensure_ascii=False)
-                if data == '[]':
-                    print "try to get proj employees"
-                    data = json.dumps(GetEmployeeInfosByProj(departmentName),ensure_ascii=False)
-    ##            print data
-                content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
-            self.wfile.write(content)
-        elif urlResult.path == "/login":
-            userName = dictParam["name"][0].decode('utf-8')
-            userPasswd = dictParam["passwd"][0].decode('utf-8')
-            session = LoginUserInfo(userName,userPasswd)
-            retDict = {};
-            retDict["session"] = session;
-            data = json.dumps(retDict,ensure_ascii=False)
-            content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
-            self.wfile.write(content)
-        elif urlResult.path == "/changePaswwd":
-            content = "";
-            if CheckUserSession(dictParam["name"][0],dictParam["session"][0]) != "OK":
-                content = '%s(%s)'%(dictParam["callback"][0],"")
-                print 'check username and sersseion',dictParam["name"][0],dictParam["session"][0]
-            else:
+            #print data.encode('utf-8')
+            if urlResult.path == "/getOrgs":
+                content = "";
+                if CheckUserSession(dictParam["name"][0].decode('utf-8'),dictParam["session"][0]) != "OK":
+                    content = '%s(%s)'%(dictParam["callback"][0],"")
+                    print u'校验用户失败，检查输入信息',dictParam["name"][0].decode('utf-8'),dictParam["session"][0]
+                else:
+                    content = '%s(%s)'%(dictParam["callback"][0],GetOrgInfos())
+                    
+                self.wfile.write(content)
+            elif urlResult.path == "/getEmployees":
+                content = "";
+                if CheckUserSession(dictParam["name"][0].decode('utf-8'),dictParam["session"][0]) != "OK":
+                    content = '%s(%s)'%(dictParam["callback"][0],"")
+                    print u'校验用户失败，检查输入信息',dictParam["name"][0].decode('utf-8'),dictParam["session"][0]
+                else:
+                    departmentName = dictParam["department"][0].decode('utf-8')
+                    projName = dictParam["proj"][0].decode('utf-8')
+                    data = json.dumps(GetEmployeeInfos(projName,departmentName),ensure_ascii=False)
+                    if data == '[]':
+                        print u"尝试通过项目组织获取资源"
+                        data = json.dumps(GetEmployeeInfosByProj(departmentName),ensure_ascii=False)
+                    content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
+                self.wfile.write(content)
+            elif urlResult.path == "/login":
                 userName = dictParam["name"][0].decode('utf-8')
                 userPasswd = dictParam["passwd"][0].decode('utf-8')
-                ChangePasswd(userPasswd,userName)
-                content = '%s(%s)'%(dictParam["callback"][0],"OK")
-            self.wfile.write(content)
+                session = LoginUserInfo(userName,userPasswd)
+                retDict = {};
+                retDict["session"] = session;
+                data = json.dumps(retDict,ensure_ascii=False)
+                content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
+                self.wfile.write(content)
+            elif urlResult.path == "/changePaswwd":
+                content = "";
+                if CheckUserSession(dictParam["name"][0].decode('utf-8'),dictParam["session"][0]) != "OK":
+                    content = '%s(%s)'%(dictParam["callback"][0],"")
+                    print u'校验用户失败，检查输入信息',dictParam["name"][0].decode('utf-8'),dictParam["session"][0]
+                else:
+                    userName = dictParam["name"][0].decode('utf-8')
+                    userPasswd = dictParam["passwd"][0].decode('utf-8')
+                    ChangePasswd(userName,userPasswd)
+                    retDict = {};
+                    retDict["result"] = "OK";
+                    data = json.dumps(retDict,ensure_ascii=False)
+                    content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
+                self.wfile.write(content)
+        except Exception,error:
+            print error
             
     def do_POST(self):
         ctype, pdict = cgi.parse_header(self.headers['content-type'])
@@ -289,16 +297,13 @@ class TodoHandler(BaseHTTPRequestHandler):
         else:
             self.send_error(415, "Only json data is supported.")
             return
- 
         self.send_response(200)
         self.send_header('Content-type', 'application/json')
         self.end_headers()
- 
         self.wfile.write(post_values)
  
 if __name__ == '__main__':
-    # Start a simple server, and loop forever
     from BaseHTTPServer import HTTPServer
-    server = HTTPServer(('localhost', 8888), TodoHandler)
+    server = HTTPServer(('0.0.0.0', 9608), TodoHandler)
     print("Starting server, use <Ctrl-C> to stop")
     server.serve_forever()
