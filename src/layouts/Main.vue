@@ -37,7 +37,7 @@ export default {
             userSession: '',
             dialogFormVisible: false,
             formLabelWidth: '100px',
-            host:'http://47.75.127.61:9608'
+            host:'http://58.101.21.189:9608'
         };
     },
     mounted: function() {

@@ -69,7 +69,7 @@ export default {
                 password: '',
                 type: ''
             },
-            host:'http://47.75.127.61:9608'
+            host:'http://58.101.21.189:9608'
         }
     },
     methods: {
