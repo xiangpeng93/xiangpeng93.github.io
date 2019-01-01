@@ -1,6 +1,10 @@
 # -*- coding: UTF-8 -*-
 import sqlite3
 import json
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
 g_dict = {} 
 
 ###全局变量存储，主要是方便外部调用时关闭sqlite链接
@@ -70,7 +74,7 @@ def GetEmployeeInfosByProj(projName):
     ConnectSqlite()
     sqlStr = "select * from Employees where projName = '"+ (projName)+"'"
     sqlStr = sqlStr.encode('utf-8')
-    print u'通过项目组织查询雇员信息：',sqlStr
+    print "通过项目组织查询雇员信息：",sqlStr
     g_dict["cursor"].execute(sqlStr)
     employeeInfos = g_dict["cursor"].fetchall();
     for info in employeeInfos:
@@ -125,7 +129,7 @@ def GetEmployeeInfos(projName,departmentName):
     ConnectSqlite()
     sqlStr = "select * from Employees where department = '"+  (departmentName)+ "' and projName = '"+ (projName)+"'"
     sqlStr = sqlStr.encode('utf-8')
-    print u'通过部门和组织查询雇员信息：',sqlStr
+    print "通过部门和组织查询雇员信息：",sqlStr
     g_dict["cursor"].execute(sqlStr)
     employeeInfos = g_dict["cursor"].fetchall();
     for info in employeeInfos:
@@ -191,7 +195,7 @@ def LoginUserInfo(name,passwd):
         sqlUpdate = sqlUpdate.encode('utf-8')
         g_dict["cursor"].execute(sqlUpdate)
         g_dict["conn"].commit()
-        print u"登陆用户 ：",sqlUpdate,name,passwd
+        print "登陆用户 ：",sqlUpdate,name,passwd
     CloseSqlite()
     return strRet
 
@@ -199,21 +203,21 @@ def CheckUserSession(name,session):
     ConnectSqlite()
     sqlStr = "select * from UserInfos where name = '%s' and session = '%s' "%(name,session)
     sqlStr = sqlStr.encode('utf-8')
-    print u"校验用户 ：",sqlStr
+    print "校验用户 ：",sqlStr
     g_dict["cursor"].execute(sqlStr)
     userInfos = g_dict["cursor"].fetchall();
     if len(userInfos) == 0:
         strRet = "FAILED"
-        print u'校验失败',name,session
+        print "校验失败",name,session
     CloseSqlite()
-    print u'校验成功',name,session
+    print "校验成功",name,session
     return 'OK'
 
 def ChangePasswd(name,passwd):
     ConnectSqlite()
     sqlUpdate = "update UserInfos set passwd = '%s' ,session = 'XXXX' where name = '%s' "%(passwd,name)
     sqlUpdate = sqlUpdate.encode('utf-8')
-    print u'修改密码',sqlUpdate,name,passwd
+    print "修改密码",sqlUpdate,name,passwd
     g_dict["cursor"].execute(sqlUpdate)
     g_dict["conn"].commit()
     CloseSqlite()
@@ -229,9 +233,10 @@ class TodoHandler(BaseHTTPRequestHandler):
     TODOS = []
     def do_GET(self):
         try:
+            print "新Get请求进入:','路径为：",self.path
             urlResult = urlparse.urlparse(self.path)
             dictParam = urlparse.parse_qs(urlResult.query)
-            print u'新Get请求进入:','路径为：',self.path
+            
             print urlResult,dictParam
             
             self.send_response(200)
@@ -244,7 +249,7 @@ class TodoHandler(BaseHTTPRequestHandler):
                 content = "";
                 if CheckUserSession(dictParam["name"][0].decode('utf-8'),dictParam["session"][0]) != "OK":
                     content = '%s(%s)'%(dictParam["callback"][0],"")
-                    print u'校验用户失败，检查输入信息',dictParam["name"][0].decode('utf-8'),dictParam["session"][0]
+                    print "校验用户失败，检查输入信息",dictParam["name"][0].decode('utf-8'),dictParam["session"][0]
                 else:
                     content = '%s(%s)'%(dictParam["callback"][0],GetOrgInfos())
                     
@@ -253,13 +258,13 @@ class TodoHandler(BaseHTTPRequestHandler):
                 content = "";
                 if CheckUserSession(dictParam["name"][0].decode('utf-8'),dictParam["session"][0]) != "OK":
                     content = '%s(%s)'%(dictParam["callback"][0],"")
-                    print u'校验用户失败，检查输入信息',dictParam["name"][0].decode('utf-8'),dictParam["session"][0]
+                    print "校验用户失败，检查输入信息",dictParam["name"][0].decode('utf-8'),dictParam["session"][0]
                 else:
                     departmentName = dictParam["department"][0].decode('utf-8')
                     projName = dictParam["proj"][0].decode('utf-8')
                     data = json.dumps(GetEmployeeInfos(projName,departmentName),ensure_ascii=False)
                     if data == '[]':
-                        print u"尝试通过项目组织获取资源"
+                        print "尝试通过项目组织获取资源"
                         data = json.dumps(GetEmployeeInfosByProj(departmentName),ensure_ascii=False)
                     content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
                 self.wfile.write(content)
@@ -276,7 +281,7 @@ class TodoHandler(BaseHTTPRequestHandler):
                 content = "";
                 if CheckUserSession(dictParam["name"][0].decode('utf-8'),dictParam["session"][0]) != "OK":
                     content = '%s(%s)'%(dictParam["callback"][0],"")
-                    print u'校验用户失败，检查输入信息',dictParam["name"][0].decode('utf-8'),dictParam["session"][0]
+                    print "校验用户失败，检查输入信息",dictParam["name"][0].decode('utf-8'),dictParam["session"][0]
                 else:
                     userName = dictParam["name"][0].decode('utf-8')
                     userPasswd = dictParam["passwd"][0].decode('utf-8')
