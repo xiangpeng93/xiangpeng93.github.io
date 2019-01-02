@@ -40,6 +40,7 @@
     </div>
 </template>
 <script>
+	import linkUrl from "../link.js"
 export default {
     data() {
         return {
@@ -48,8 +49,8 @@ export default {
             userSession: '',
             dialogFormVisible: false,
             formLabelWidth: '100px',
-            host:'http://58.101.21.189:9608',
-            uploadLogoPicUrl:'http://127.0.0.1:9608/uploadHomePic'
+            host:linkUrl["host"] ,
+            uploadLogoPicUrl:linkUrl["host"]+linkUrl["uploadHomePic"]
         };
     },
     mounted: function() {

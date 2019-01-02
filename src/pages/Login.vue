@@ -59,6 +59,7 @@
 }
 </style>
 <script>
+    import linkUrl from "../link.js"
 export default {
     data() {
         return {
@@ -69,13 +70,14 @@ export default {
                 password: '',
                 type: ''
             },
-            host:'http://58.101.21.189:9608'
+            host: linkUrl["host"] 
         }
     },
     methods: {
         onSubmit() {
-            console.log("check user info");
+            console.log("check user info",this.host);
             //发送get请求
+
             this.$http.jsonp(this.host+"/login", {
                 params: {
                     "name": this.userInfos.name,

@@ -370,7 +370,7 @@
 </template>
 <script>
 import MainLayout from '../layouts/Main.vue'
-
+import linkUrl from "../link.js"
 export default {
     components: {
         MainLayout
@@ -419,7 +419,7 @@ export default {
                 console.log(res);
                 this.employeeInfos = res.data;
             }, function(res) {
-                this.transToLogin()
+                //this.transToLogin()
                 console.warn(res);
             })
         },
@@ -437,8 +437,8 @@ export default {
         handleNodeClick(data) {
             console.log(data);
             console.log(this.$refs.treeOrg.getNode(this.$refs.treeOrg.currentNode.node).parent.data)
-            this.currentDepartment = data.label
-            this.currentProj = this.$refs.treeOrg.getNode(this.$refs.treeOrg.currentNode.node).parent.data.label
+            this.currentDepartment = data.label_true
+            this.currentProj = this.$refs.treeOrg.getNode(this.$refs.treeOrg.currentNode.node).parent.data.label_true
             this.getEmployeesInfo()
         },
         handleEdit(index, row) {
@@ -472,7 +472,7 @@ export default {
     },
     data() {
         return {
-            host:'http://58.101.21.189:9608',
+            host:linkUrl["host"] ,
             userName:"",
             userSession:"",
             labelWidth: "120px",

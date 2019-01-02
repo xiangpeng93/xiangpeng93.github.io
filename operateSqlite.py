@@ -6,9 +6,8 @@ import os
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-g_dict = {} 
-
 ###全局变量存储，主要是方便外部调用时关闭sqlite链接
+g_dict = {} 
 
 #### 打开数据库链接
 def ConnectSqlite():
@@ -19,64 +18,82 @@ def ConnectSqlite():
     cursor = conn.cursor()
     g_dict["conn"] = conn
     g_dict["cursor"] = cursor
+    
 #### 关闭数据库链接
 def CloseSqlite():
     if g_dict.has_key("conn"):
         g_dict["conn"].close()
         g_dict.clear()
+        
+#### 获取组织中的人数
+def GetEmployeeNumber(projName,departmentName):
+    args = (departmentName,projName)
+    g_dict["cursor"].execute("select * from Employees where department = ? and projName = ?",args)
+    employeeInfos = g_dict["cursor"].fetchall();
+    return len(employeeInfos)
+
 #### 组织树解析类
 class COrganization:
     Id = 0;
     Name = "";
     Description = "";
     ParentId = 0
-    def __init__(self,id):
+    Num = 0
+    def __init__(self,id,name):
+        self.Name = name
+        self.Num = 0
         self.AddSubOrg(id);
         pass
     def AddSubOrg(self,id):
         self.SubOrgs = []
-        sqlStr = "select * from Organization where parentId = "+str(id)
-        g_dict["cursor"].execute(sqlStr)
+        g_dict["cursor"].execute( str("select * from Organization where parentId = %s"%(id)))
+        
         OrganizationInfo = g_dict["cursor"].fetchall();
         if len(OrganizationInfo) > 0:
             pass
         for info in OrganizationInfo:
-            tmpOrg = COrganization(info[0])
+            tmpOrg = COrganization(info[0],info[1])
             tmpOrg.Id = info[0]
             tmpOrg.Name = info[1]
             tmpOrg.Description = info[2]
             tmpOrg.ParentId = id
+            tmpOrg.Num += GetEmployeeNumber(self.Name,tmpOrg.Name)
+            self.Num += tmpOrg.Num
             self.SubOrgs.append(tmpOrg)
 
+#### 组织结构化上传
 def GetAllOrgFormOrgs(orgs,index):
     orgEles = []
     for org in orgs.SubOrgs:
         orgEle = {}
-        orgEle["label"] = org.Name
+        orgEle["label"] = org.Name + " (" + str(org.Num) + ")"
         orgEle["id"] = org.Id
+        orgEle["label_true"] = org.Name
         orgEles.append(orgEle)
-##        print org.Id, org.Name.encode("utf-8") ,index
         orgEle["children"] = GetAllOrgFormOrgs(org,index+1)
-    ##if orgEles.count > 0:
-      ##  print orgEles
+
     return orgEles
 
+#### 获取组织
 def GetOrgInfos():
+    print u"获取组织结构"
     ConnectSqlite()
-    c = COrganization(0)
+    c = COrganization(0,'')
 
     data = json.dumps(GetAllOrgFormOrgs(c,0),ensure_ascii=False)
 
     CloseSqlite()
     
     return data.encode('utf-8')
+
+##print GetOrgInfos()
+
 def GetEmployeeInfosByProj(projName):
     employeeInfosArray = []
     ConnectSqlite()
-    sqlStr = "select * from Employees where projName = '"+ (projName)+"'"
-    sqlStr = sqlStr.encode('utf-8')
-    print "通过项目组织查询雇员信息：",sqlStr
-    g_dict["cursor"].execute(sqlStr)
+    args = (projName,);
+    print u"通过项目组织查询雇员信息：",args
+    g_dict["cursor"].execute("select * from Employees where projName = ?",args)
     employeeInfos = g_dict["cursor"].fetchall();
     for info in employeeInfos:
         employeeInfo = {}
@@ -128,10 +145,9 @@ def GetEmployeeInfosByProj(projName):
 def GetEmployeeInfos(projName,departmentName):
     employeeInfosArray = []
     ConnectSqlite()
-    sqlStr = "select * from Employees where department = '"+  (departmentName)+ "' and projName = '"+ (projName)+"'"
-    sqlStr = sqlStr.encode('utf-8')
-    print "通过部门和组织查询雇员信息：",sqlStr
-    g_dict["cursor"].execute(sqlStr)
+    args = (departmentName,projName)
+    print u"通过部门和组织查询雇员信息：",departmentName,projName
+    g_dict["cursor"].execute("select * from Employees where department = ? and projName = ?",args)
     employeeInfos = g_dict["cursor"].fetchall();
     for info in employeeInfos:
         employeeInfo = {}
@@ -183,43 +199,41 @@ def GetEmployeeInfos(projName,departmentName):
 import random
 
 def LoginUserInfo(name,passwd):
+    print u"用户登录",name,passwd
     ConnectSqlite()
     strRet = str(random.uniform(100000000,1000000000))
-    sqlStr = "select * from UserInfos where name = '%s' and passwd = '%s' "%(name,passwd)
-    sqlStr = sqlStr.encode('utf-8')
-    g_dict["cursor"].execute(sqlStr)
+    args = (name,passwd)
+    g_dict["cursor"].execute("select * from UserInfos where name = ? and passwd = ?",args)
     userInfos = g_dict["cursor"].fetchall();
     if len(userInfos) == 0:
         strRet = ""
     for info in userInfos:
-        sqlUpdate = "update UserInfos set session = '%s'  where name = '%s' "%(strRet,name)
-        sqlUpdate = sqlUpdate.encode('utf-8')
-        g_dict["cursor"].execute(sqlUpdate)
+        print u"更新session 编号"
+        args = (strRet,name)
+        g_dict["cursor"].execute("update UserInfos set session = ? where name = ? ",args)
         g_dict["conn"].commit()
-        print "登陆用户 ：",sqlUpdate,name,passwd
+        print u"登陆用户 ：",name,passwd
     CloseSqlite()
     return strRet
 
 def CheckUserSession(name,session):
     ConnectSqlite()
-    sqlStr = "select * from UserInfos where name = '%s' and session = '%s' "%(name,session)
-    sqlStr = sqlStr.encode('utf-8')
-    print "校验用户 ：",sqlStr
-    g_dict["cursor"].execute(sqlStr)
+    args = (name,session)
+    print u"校验用户 ：",name,session
+    g_dict["cursor"].execute("select * from UserInfos where name = ? and session = ? ",args)
     userInfos = g_dict["cursor"].fetchall();
     if len(userInfos) == 0:
         strRet = "FAILED"
-        print "校验失败",name,session
+        print u"校验失败",name,session
     CloseSqlite()
-    print "校验成功",name,session
+    print u"校验成功",name,session
     return 'OK'
 
 def ChangePasswd(name,passwd):
     ConnectSqlite()
-    sqlUpdate = "update UserInfos set passwd = '%s' ,session = 'XXXX' where name = '%s' "%(passwd,name)
-    sqlUpdate = sqlUpdate.encode('utf-8')
-    print "修改密码",sqlUpdate,name,passwd
-    g_dict["cursor"].execute(sqlUpdate)
+    args = (passwd,name)
+    print u"修改密码：",name,passwd
+    g_dict["cursor"].execute("update UserInfos set passwd = ? ,session = 'XXXX' where name = ?",args)
     g_dict["conn"].commit()
     CloseSqlite()
     return 'OK'
