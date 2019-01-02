@@ -9,7 +9,6 @@ import VueResource from 'vue-resource'
 Vue.use(ElementUI)
 Vue.use(VueRouter)
 Vue.use(VueResource)
-console.log(router)
 
 const app = new Vue({
 	el:"#app",

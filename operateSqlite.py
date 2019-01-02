@@ -231,6 +231,13 @@ import urlparse
  
 class TodoHandler(BaseHTTPRequestHandler):
     TODOS = []
+    def do_OPTIONS(self):
+        self.send_response(200, "ok")
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, OPTIONS, POST')
+        self.send_header("Access-Control-Allow-Headers", "X-Requested-With")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.end_headers()
     def do_GET(self):
         try:
             print "新Get请求进入:','路径为：",self.path
@@ -291,22 +298,48 @@ class TodoHandler(BaseHTTPRequestHandler):
                     data = json.dumps(retDict,ensure_ascii=False)
                     content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
                 self.wfile.write(content)
+            elif urlResult.path == "/updateVersion":
+                content = "";
+                if CheckUserSession(dictParam["name"][0].decode('utf-8'),dictParam["session"][0]) != "OK":
+                    content = '%s(%s)'%(dictParam["callback"][0],"")
+                    print "校验用户失败，检查输入信息",dictParam["name"][0].decode('utf-8'),dictParam["session"][0]
+                else:
+                    os.system("sh updateVersion.sh")
+                    retDict = {};
+                    retDict["result"] = "OK";
+                    data = json.dumps(retDict,ensure_ascii=False)
+                    content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
+                self.wfile.write(content)
         except Exception,error:
             print error
             
     def do_POST(self):
-        ctype, pdict = cgi.parse_header(self.headers['content-type'])
-        if ctype == 'application/json':
-            length = int(self.headers['content-length'])
-            post_values = json.loads(self.rfile.read(length))
-            self.TODOS.append(post_values)
-        else:
-            self.send_error(415, "Only json data is supported.")
-            return
-        self.send_response(200)
-        self.send_header('Content-type', 'application/json')
-        self.end_headers()
-        self.wfile.write(post_values)
+        print "新POST请求进入:','路径为：",self.path
+        if self.path == "/uploadHomePic":
+            form = cgi.FieldStorage(
+                fp=self.rfile,
+                headers=self.headers,
+                environ={'REQUEST_METHOD':'POST',
+                         'CONTENT_TYPE':self.headers['Content-Type']
+                         })
+            self.send_response(200)
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.end_headers()
+            
+            self.wfile.write('Client: %sn ' % str(self.client_address) )
+            self.wfile.write('User-agent: %sn' % str(self.headers['user-agent']))
+            self.wfile.write('Path: %sn'%self.path)
+            self.wfile.write('Form data:n')
+            for field in form.keys():
+                field_item = form[field]
+                filename = field_item.filename
+                filevalue  = field_item.value
+                filesize = len(filevalue)
+                print u"更新新的主页图片:",(filename),len(filevalue)
+                with open("logo.jpg",'wb') as f:
+                    f.write(filevalue)
+                    f.close()
+        return 
  
 if __name__ == '__main__':
     from BaseHTTPServer import HTTPServer
