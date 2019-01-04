@@ -4,7 +4,7 @@
         <el-col :span="5" style="height: 100%;">
           <el-menu
           style="height: 100%;"
-          default-active="1"
+          default-active="PersonInfo"
           @select="handleSelect"
           >
           <el-menu-item index="PersonInfo">

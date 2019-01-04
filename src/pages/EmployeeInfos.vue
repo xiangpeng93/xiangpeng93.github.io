@@ -400,7 +400,7 @@ export default {
 	            console.log(res);
 	            this.data = res.data;
 	        }, function(res) {
-	            this.transToLogin()
+	            //this.transToLogin()
 	            console.warn(res);
 	        })
         }
@@ -524,48 +524,6 @@ export default {
                 remarks: ''
             },
             employeeInfos: [],
-            // employeeInfos: [{
-            //     companyName: '',
-            //     projName: '',
-            //     department: '',
-            //     job: '',
-            //     name: '',
-            //     enterTime:'',
-            //     salaryBegin: '',
-            //     salaryStart: '',
-            //     salaryChange: '',
-            //     salaryCurrent: '',
-            //     phoneNum: '',
-            //     nation:'',
-            //     marry:'',
-            //     education:'',
-            //     demobilized:'',
-            //     bornTime:'',
-            //     sex:'',
-            //     age:'',
-            //     zodiac:'',
-            //     constellation:'',
-            //     jobYear:'',
-            //     household:'',
-            //     personCard:'',
-            //     housebase:'',
-            //     personAddr:'',
-            //     personCardUsed:'',
-            //     isHouse:'',
-            //     nowHouse:'',
-            //     urgentName:'',
-            //     urgentPhone:'',
-            //     introductName:'',
-            //     introductProj:'',
-            //     leaveTime:'',
-            //     leaveReason:'',
-            //     contractBegin:'',
-            //     contractYear:'',
-            //     contractEnd:'',
-            //     isSecurity:'',
-            //     securitySituation:'',
-            //     remarks:''
-            // }],
             data: [],
             defaultProps: {
                 children: 'children',
