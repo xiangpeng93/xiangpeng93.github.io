@@ -126,7 +126,7 @@ class ProcessHandler(BaseHTTPRequestHandler):
                 content = '%s(%s)'%(dictParam["callback"][0],"")
                 print u"校验用户失败，检查输入信息",dictParam["name"][0].decode('utf-8'),dictParam["session"][0]
             else:
-                os.system("git reset --hard")
+
                 os.system("git pull")
                 retDict = {};
                 retDict["result"] = "OK";
