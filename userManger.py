@@ -26,10 +26,12 @@ def CheckUserSession(name,session):
     print u"校验用户 ：",name,session
     g_dict["cursor"].execute("select * from UserInfos where name = ? and session = ? ",args)
     userInfos = g_dict["cursor"].fetchall();
+    CloseSqlite()
     if len(userInfos) == 0:
         strRet = "FAILED"
         print u"校验失败",name,session
-    CloseSqlite()
+        return "FAILED"
+    
     print u"校验成功",name,session
     return 'OK'
 

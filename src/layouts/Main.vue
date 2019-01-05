@@ -4,7 +4,8 @@
 			<el-menu :default-active="$route.path" class="el-menu-demo" mode="horizontal" @select="handleSelect" router>
 				<el-menu-item index="/Home" align="center" style="width: 200px"><i class="el-icon-document"></i><b>彭梦瑶的人事系统
 				</b></el-menu-item>
-				<el-menu-item index="/EmployeeInfos">人员组织信息</el-menu-item>
+                <el-menu-item index="/EmployeeInfos">组织人员信息</el-menu-item>
+				<el-menu-item index="/QueryEmployeeInfo">雇员信息查询</el-menu-item>
 				<!--  <el-menu-item index="/About">其他信息</el-menu-item> -->
 				<el-submenu index="#" style="float:right;">
 					<template slot="title"><i class="el-icon-service"></i>{{userName}}</template>

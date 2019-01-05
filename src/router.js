@@ -3,6 +3,7 @@ import About from "./pages/About.vue"
 import Login from "./pages/Login.vue"
 import ConfigInfo from "./pages/ConfigInfo.vue"
 import EmployeeInfos from "./pages/EmployeeInfos.vue"
+import QueryEmployeeInfo from "./pages/QueryEmployeeInfo.vue"
 import Router from 'vue-router'
 export default new Router({
   mode: 'hash',
@@ -20,6 +21,10 @@ export default new Router({
       path: '/EmployeeInfos',
       component: EmployeeInfos
     },
+    {
+      path: '/QueryEmployeeInfo',
+      component: QueryEmployeeInfo
+    },
     {    
       path: '/ConfigInfo',
       component: ConfigInfo
@@ -28,6 +33,7 @@ export default new Router({
       path: '/About',
       component: About
     }
+    
   ]
 })
   

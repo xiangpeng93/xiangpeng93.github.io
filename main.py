@@ -61,6 +61,17 @@ class ProcessHandler(BaseHTTPRequestHandler):
                     data = json.dumps(GetEmployeeInfosByProj(departmentName),ensure_ascii=False)
                 content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
             self.wfile.write(content)
+        elif urlResult.path == "/queryEmployeeInfo":
+            content = "";
+            if CheckUserSession(dictParam["name"][0].decode('utf-8'),dictParam["session"][0]) != "OK":
+                content = '%s(%s)'%(dictParam["callback"][0],"")
+                print u"校验用户失败，检查输入信息",dictParam["name"][0].decode('utf-8'),dictParam["session"][0]
+            else:
+                key = dictParam["key"][0].decode('utf-8')
+                value = dictParam["value"][0].decode('utf-8')
+                data = json.dumps(QueryEmployeeInfo(key,value),ensure_ascii=False)
+                content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
+            self.wfile.write(content)
         elif urlResult.path == "/login":
             userName = dictParam["name"][0].decode('utf-8')
             userPasswd = dictParam["passwd"][0].decode('utf-8')
