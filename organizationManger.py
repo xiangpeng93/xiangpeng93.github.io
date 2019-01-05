@@ -53,3 +53,25 @@ def GetOrgInfos():
     data = json.dumps(GetAllOrgFormOrgs(c,0),ensure_ascii=False)
     CloseSqlite() 
     return data.encode('utf-8')
+
+#### 获取组织
+def AddOrgInfo(orgName,parentOrgId):
+    nRet = -1
+    print u"添加组织结构",orgName,parentOrgId
+    ConnectSqlite()
+    g_dict["cursor"].execute("insert into Organization(name,parentId) VALUES(?,?)",(orgName,parentOrgId))
+    g_dict["conn"].commit()
+    g_dict["cursor"].execute("select * from Organization where parentId = ? and name = ?",(parentOrgId,orgName))        
+    OrganizationInfo = g_dict["cursor"].fetchall();
+    if len(OrganizationInfo) > 0:
+        nRet = OrganizationInfo[0][0]
+    CloseSqlite() 
+    return nRet
+#### 获取组织
+def DelOrgInfo(orgId):
+    print u"删除组织结构",orgId
+    ConnectSqlite()
+    g_dict["cursor"].execute("delete from Organization where id=?",(orgId,))
+    g_dict["conn"].commit()
+    CloseSqlite() 
+    return
