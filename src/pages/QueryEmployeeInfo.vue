@@ -409,7 +409,7 @@ export default {
                     this.$notify.info({
                         title: '雇员合同到期提醒',
                         message: this.search + ', 合同到期人数为：' + this.employeeInfos.length
-                    });
+                    })
                 }
             }, function(res) {
                 console.warn(res);
