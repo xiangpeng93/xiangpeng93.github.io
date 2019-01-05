@@ -12,7 +12,7 @@ def ConnectSqlite():
     if g_dict.has_key("conn"):
         print "connect ready."
         return
-    conn = sqlite3.connect('chwy3.db')
+    conn = sqlite3.connect('../chwy3.db')
     cursor = conn.cursor()
     g_dict["conn"] = conn
     g_dict["cursor"] = cursor
