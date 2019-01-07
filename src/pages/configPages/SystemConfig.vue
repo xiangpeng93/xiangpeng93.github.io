@@ -1,7 +1,7 @@
 <template>
-	<div style="margin: 5px">
-		<el-tabs v-model="activeName" >
-			<el-tab-pane label="主页图片" name="first">
+	<div style="height: 98%">
+		<el-tabs v-model="activeName" type="border-card" style="height: 100%">
+			<el-tab-pane label="主页图片" name="first" style="height:85vh;margin: 5px;position: relative;">
 				<el-row>
 					<el-col :span="6">
 						<el-upload  
