@@ -17,6 +17,7 @@
                 <el-main>
                     <el-input v-model="search" size="min" placeholder="输入关键字搜索" />
                     <el-table :data="employeeInfos.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width: 100%" :row-class-name="tableRowClassName">
+                        <el-table-column label="序号" width="auto" type="index"/>
                         <el-table-column prop="name" label="姓名" width="auto">
                         </el-table-column>
                         <el-table-column prop="age" label="年龄" width="auto">

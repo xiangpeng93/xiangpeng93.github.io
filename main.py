@@ -7,14 +7,15 @@ import json
 import urlparse
 
 import sys
-reload(sys)
-sys.setdefaultencoding('utf-8')
+##reload(sys)
+##sys.setdefaultencoding('utf-8')
 sys.dont_write_bytecode = True
 
 from operateSqlite import *
 from organizationManger import *
 from employeesManger import *
 from userManger import *
+import operateEmployeeXls
 
 class ProcessHandler(BaseHTTPRequestHandler):
     def do_OPTIONS(self):
@@ -45,8 +46,8 @@ class ProcessHandler(BaseHTTPRequestHandler):
                 print u"校验用户失败，检查输入信息",dictParam["name"][0].decode('utf-8'),dictParam["session"][0]
             else:
                 content = '%s(%s)'%(dictParam["callback"][0],GetOrgInfos())
-                
             self.wfile.write(content)
+            
         elif urlResult.path == "/getEmployees":
             content = "";
             if CheckUserSession(dictParam["name"][0].decode('utf-8'),dictParam["session"][0]) != "OK":
@@ -61,6 +62,17 @@ class ProcessHandler(BaseHTTPRequestHandler):
                     data = json.dumps(GetEmployeeInfosByProj(departmentName),ensure_ascii=False)
                 content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
             self.wfile.write(content)
+        elif urlResult.path == "/getEmployeeByName":
+            content = "";
+            if CheckUserSession(dictParam["name"][0].decode('utf-8'),dictParam["session"][0]) != "OK":
+                content = '%s(%s)'%(dictParam["callback"][0],"")
+                print u"校验用户失败，检查输入信息",dictParam["name"][0].decode('utf-8'),dictParam["session"][0]
+            else:
+                employeeName = dictParam["employeeName"][0].decode('utf-8')
+                data = json.dumps(GetEmployeeInfosByName(employeeName),ensure_ascii=False)
+                content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
+            self.wfile.write(content)
+            
         elif urlResult.path == "/getEmployeeByPage":
             content = "";
             if CheckUserSession(dictParam["name"][0].decode('utf-8'),dictParam["session"][0]) != "OK":
@@ -69,10 +81,13 @@ class ProcessHandler(BaseHTTPRequestHandler):
             else:
                 pageNum = dictParam["pageNum"][0].decode('utf-8')
                 PageSize = dictParam["PageSize"][0].decode('utf-8')
-                
-                data = json.dumps(GetEmployeeByPage(pageNum,PageSize),ensure_ascii=False)
+                dataResult= {};
+                dataResult["data"]=GetEmployeeByPage(pageNum,PageSize)
+                dataResult["size"]=GetAllEmployeeNumber();
+                data = json.dumps(dataResult,ensure_ascii=False)
                 content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
             self.wfile.write(content)
+            
         elif urlResult.path == "/queryEmployeeInfo":
             content = "";
             if CheckUserSession(dictParam["name"][0].decode('utf-8'),dictParam["session"][0]) != "OK":
@@ -149,7 +164,7 @@ class ProcessHandler(BaseHTTPRequestHandler):
 ##            print "do get error",error
             
     def do_POST(self):
-        print u"新POST请求进入:','路径为：",self.path
+        print u"新POST请求进入','路径为：",self.path
         if self.path == "/uploadHomePic":
             form = cgi.FieldStorage(
                 fp=self.rfile,
@@ -174,6 +189,30 @@ class ProcessHandler(BaseHTTPRequestHandler):
                 with open("logo.jpg",'wb') as f:
                     f.write(filevalue)
                     f.close()
+        if self.path == "/updateEmployeesInfo":
+            form = cgi.FieldStorage(
+                fp=self.rfile,
+                headers=self.headers,
+                environ={'REQUEST_METHOD':'POST',
+                         'CONTENT_TYPE':self.headers['Content-Type']
+                         })
+            self.send_response(200)
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.end_headers()
+            self.wfile.write('Client: %sn ' % str(self.client_address) )
+            self.wfile.write('User-agent: %sn' % str(self.headers['user-agent']))
+            self.wfile.write('Path: %sn'%self.path)
+            self.wfile.write('Form data:n')
+            for field in form.keys():
+                field_item = form[field]
+                filename = field_item.filename
+                filevalue  = field_item.value
+                filesize = len(filevalue)
+                print u"更新雇员信息:",(filename),len(filevalue)
+                with open("employeesInfo.xlsx",'wb') as f:
+                    f.write(filevalue)
+                    f.close()
+                    operateEmployeeXls.AddEmployeesInfoByFileName("employeesInfo.xlsx")
         return
     
 if __name__ == '__main__':

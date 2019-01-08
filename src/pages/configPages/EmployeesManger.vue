@@ -7,7 +7,7 @@
 					<el-input v-model="search"
 					placeholder="输入姓名搜索" style="width: 300px;"/>
 					<span style="margin: 5px"></span>
-					<el-button type="primary" style="width: 100px" align="center">查询</el-button>
+					<el-button type="primary" style="width: auto" @click="queryEmployeeByName()">查询雇员信息</el-button>
 				</div>
 				<div style="height:75vh;overflow-y:auto; ">
 					<el-table :data="tableData" style="width: 100%" >
@@ -89,7 +89,7 @@
 				tableData: [],
 				search: '',
 				host:linkUrl["host"],
-				uploadXlsFileUrl:this.host+"/updateEmployeesInfo",
+				uploadXlsFileUrl:linkUrl["host"]+"/updateEmployeesInfo",
 				totalSize:0
 			}
 		},
@@ -136,7 +136,23 @@
 					}
 				}).then(function(res) {
 					console.log(res);
+					this.tableData = res.data.data;
+					this.totalSize = res.data.size;
+				}, function(res) {
+					console.warn(res);
+				})
+			},
+			queryEmployeeByName(){
+				this.$http.jsonp(this.host+"/getEmployeeByName", {
+					params: {
+						"name": this.userName,
+						"session": this.userSession,
+						"employeeName": "%"+this.search+"%"
+					}
+				}).then(function(res) {
+					console.log(res);
 					this.tableData = res.data;
+					this.totalSize = res.data.length;
 				}, function(res) {
 					console.warn(res);
 				})
