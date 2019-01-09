@@ -4,12 +4,11 @@
 			<el-aside width="200px" style="height:90vh" align="center">
 				<el-menu
 				style="height: 100%;"
-				default-active="PersonInfo"
 				@select="handleSelect"
 				>
-				<el-menu-item index="PersonInfo">
+				<!-- <el-menu-item index="PersonInfo">
 					个人信息
-				</el-menu-item>
+				</el-menu-item> -->
 				<el-menu-item index="OrganizationManger">
 					组织管理
 				</el-menu-item>
