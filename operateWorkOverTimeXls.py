@@ -106,6 +106,7 @@ def GetWorkoverData():
                 tDataDict["endTime"] = info[5]
                 tDataDict["days"] = info[6]
                 tDataDict["hours"] = info[7]
+		tDataDict["leaves"] = info[8]
                 if tDataDict["leaves"] == u"非调休":
                     realDays = realDays + int(info[6])
                     realHours = realHours + int(info[7])
@@ -120,7 +121,7 @@ def GetWorkoverData():
             tDataAll["days"] = u"实际小时数:"+ str(realHours)
             tDataAll["hours"] = u"加班工资:"+ str(realDays*perDayCost+realHours*perHourCost)
             DstInfo.append(tDataAll)
-        except:
+        except Exception,error:
             print "parse GetWorkoverData row value error",error
             pass
     OvertimeWorkData.clear()

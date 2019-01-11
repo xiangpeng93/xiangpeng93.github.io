@@ -47,7 +47,9 @@ def AddEmployeesInfoByFileName(fileName):
             if nRows > 0 and nCols>0:
                 operateSqlite.g_dict["cursor"].execute("delete from Employees;");
                 for row in range(g_nStartRow,nRows):
-                    rowValue = sheet.row_values(row)   
+                    rowValue = sheet.row_values(row)
+                    rowValue = rowValue[g_nStartCol:40+g_nStartCol]
+                    print rowValue[5]
                     rowValue[5] = _transValueToDate(rowValue[5])
                     rowValue[15] = _transValueToDate(rowValue[15])
                     rowValue[34] = _transValueToDate(rowValue[34])
@@ -56,7 +58,7 @@ def AddEmployeesInfoByFileName(fileName):
 
                     for i in range(0,len(rowValue)):
                         rowValue[i] = _transFloatToInt(rowValue[i])
-                    rowTuple = rowValue[g_nStartCol:40+g_nStartCol]
+                    rowTuple = rowValue
 
                     print len(rowTuple)
                     intsertSql = "INSERT INTO Employees(companyName,projName,department, job, name,\
@@ -77,4 +79,4 @@ def AddEmployeesInfoByFileName(fileName):
         finally:
             operateSqlite.CloseSqlite()
             
-##AddEmployeesInfoByFileName("Employees.xlsx")
+##AddEmployeesInfoByFileName("employeesInfo.xlsx")
