@@ -86,7 +86,6 @@ def GetWorkoverData():
     perDayCost = 139
     perHourCost = 18
     for item in OvertimeWorkData:
-<<<<<<< HEAD
         days = 0
         hours = 0
         leaves = 0
@@ -112,7 +111,6 @@ def GetWorkoverData():
         tDataAll["hours"] = hours
         tDataAll["leaves"] = leaves
         DstInfo.append(tDataAll)
-=======
         ## 增加容错率
         try:
             days = 0
@@ -150,7 +148,6 @@ def GetWorkoverData():
         except:
             print "parse GetWorkoverData row value error",error
             pass
->>>>>>> da1ea5c41ecb20b248339621a3f9fd5bc902b5e5
     OvertimeWorkData.clear()
     return DstInfo
 ##ProcessWorkOvertimeXLS("test.xlsx")

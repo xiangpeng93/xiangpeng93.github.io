@@ -395,6 +395,7 @@ export default {
     },
     methods: {
         queryEmployeeInfo() {
+            this.loading = true
             this.$http.jsonp(this.host + "/queryEmployeeInfo", {
                 params: {
                     "name": this.userName,
@@ -403,6 +404,7 @@ export default {
                     "key": this.searchType
                 }
             }).then(function(res) {
+                this.loading = false
                 console.log(res);
                 this.employeeInfos = res.data;
                 if (this.searchType == "contractEnd") {
@@ -412,6 +414,7 @@ export default {
                     })
                 }
             }, function(res) {
+                this.loading = false
                 console.warn(res);
             })
         },
@@ -441,6 +444,7 @@ export default {
     },
     data() {
         return {
+            loading:false,
             host: linkUrl["host"],
             userName: "",
             userSession: "",
