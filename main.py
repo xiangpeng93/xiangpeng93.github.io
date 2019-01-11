@@ -17,7 +17,7 @@ from employeesManger import *
 from userManger import *
 import operateEmployeeXls
 import operateWorkOverTimeXls
-
+import operateRewardXls
 class ProcessHandler(BaseHTTPRequestHandler):
     def do_OPTIONS(self):
         self.send_response(200, "ok")
@@ -157,6 +157,15 @@ class ProcessHandler(BaseHTTPRequestHandler):
                 data = json.dumps(operateWorkOverTimeXls.GetWorkoverData(),ensure_ascii=False)
                 content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
             self.wfile.write(content)
+        elif urlResult.path == "/getRewardData":
+            content = "";
+            if CheckUserSession(dictParam["name"][0].decode('utf-8'),dictParam["session"][0]) != "OK":
+                content = '%s(%s)'%(dictParam["callback"][0],"")
+                print u"校验用户失败，检查输入信息",dictParam["name"][0].decode('utf-8'),dictParam["session"][0]
+            else:
+                data = json.dumps(operateRewardXls.GetRewardData(),ensure_ascii=False)
+                content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
+            self.wfile.write(content)
         elif urlResult.path == "/updateVersion":
             content = "";
             if CheckUserSession(dictParam["name"][0].decode('utf-8'),dictParam["session"][0]) != "OK":
@@ -243,11 +252,36 @@ class ProcessHandler(BaseHTTPRequestHandler):
                 filename = field_item.filename
                 filevalue  = field_item.value
                 filesize = len(filevalue)
-                print u"更新雇员信息:",(filename),len(filevalue)
+                print u"更新加班信息:",(filename),len(filevalue)
                 with open("overtime.xlsx",'wb') as f:
                     f.write(filevalue)
                     f.close()
                     operateWorkOverTimeXls.ProcessWorkOvertimeXLS("overtime.xlsx")
+        if self.path == "/UploadReward":
+            form = cgi.FieldStorage(
+                fp=self.rfile,
+                headers=self.headers,
+                environ={'REQUEST_METHOD':'POST',
+                         'CONTENT_TYPE':self.headers['Content-Type']
+                         })
+            self.send_response(200)
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.end_headers()
+            self.wfile.write('Client: %sn ' % str(self.client_address) )
+            self.wfile.write('User-agent: %sn' % str(self.headers['user-agent']))
+            self.wfile.write('Path: %sn'%self.path)
+            self.wfile.write('Form data:n')
+            for field in form.keys():
+                field_item = form[field]
+                filename = field_item.filename
+                filevalue  = field_item.value
+                filesize = len(filevalue)
+                print u"更新奖励信息:",(filename),len(filevalue)
+                with open("reward.xlsx",'wb') as f:
+                    f.write(filevalue)
+                    f.close()
+                    operateRewardXls.ProcessRewardXLS("reward.xlsx")
+        
         return
     
 if __name__ == '__main__':
