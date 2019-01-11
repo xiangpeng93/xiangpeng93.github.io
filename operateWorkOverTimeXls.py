@@ -88,31 +88,10 @@ def GetWorkoverData():
     for item in OvertimeWorkData:
         days = 0
         hours = 0
-        
-        for info in OvertimeWorkData[item]:
-            tDataDict = {}
-            days = days + int(info[6])
-            hours = hours + int(info[7])
-            leaves = leaves + int(info[8])
-            tDataDict["name"] = info[0]
-            tDataDict["comp"] = info[1]
-            tDataDict["proj"] = info[2]
-            tDataDict["job"] = info[3]
-            tDataDict["startTime"] = info[4]
-            tDataDict["endTime"] = info[5]
-            tDataDict["days"] = info[6]
-            tDataDict["hours"] = info[7]
-            DstInfo.append(tDataDict)
-        tDataAll = {}
-        tDataAll["name"] = u"合计"
-        tDataAll["days"] = days
-        tDataAll["hours"] = hours
-        DstInfo.append(tDataAll)
         ## 增加容错率
         try:
             days = 0
             hours = 0
-            leaves = 0
             realDays = 0
             realHours = 0
             for info in OvertimeWorkData[item]:
