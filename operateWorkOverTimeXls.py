@@ -83,9 +83,9 @@ def GetWorkoverData():
         
         for info in OvertimeWorkData[item]:
             tDataDict = {}
-            days = days + info[6]
-            hours = hours + info[7]
-            leaves = leaves + info[8]
+            days = days + int(info[6])
+            hours = hours + int(info[7])
+            leaves = leaves + int(info[8])
             tDataDict["name"] = info[0]
             tDataDict["comp"] = info[1]
             tDataDict["proj"] = info[2]

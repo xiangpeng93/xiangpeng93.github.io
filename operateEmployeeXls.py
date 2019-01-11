@@ -5,8 +5,8 @@ import os
 import operateSqlite
 from datetime import datetime
 
-g_nStartRow = 0
-g_nStartCol = 0
+g_nStartRow = 1
+g_nStartCol = 2
 def open_excel(file):
     try:
         data = xlrd.open_workbook(file)
@@ -38,6 +38,8 @@ def _transFloatToInt(value):
 def AddEmployeesInfoByFileName(fileName):       
     excelData = open_excel(fileName)
     for sheet in excelData.sheets():
+        if sheet.name.find(u"人员信息")==-1:
+            continue
         operateSqlite.ConnectSqlite()
         try:
             nRows = sheet.nrows

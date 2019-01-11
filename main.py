@@ -7,8 +7,8 @@ import json
 import urlparse
 
 import sys
-##reload(sys)
-##sys.setdefaultencoding('utf-8')
+reload(sys)
+sys.setdefaultencoding('utf-8')
 sys.dont_write_bytecode = True
 
 from operateSqlite import *
