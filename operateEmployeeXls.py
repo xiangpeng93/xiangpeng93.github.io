@@ -56,9 +56,7 @@ def AddEmployeesInfoByFileName(fileName):
 
                     for i in range(0,len(rowValue)):
                         rowValue[i] = _transFloatToInt(rowValue[i])
-                    rowTuple = rowValue[g_nStartCol:]
-                    
-                    
+                    rowTuple = rowValue[g_nStartCol:40+g_nStartCol]
 
                     print len(rowTuple)
                     intsertSql = "INSERT INTO Employees(companyName,projName,department, job, name,\
