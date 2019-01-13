@@ -1,0 +1,228 @@
+<template>
+    <div style="height:99%;">
+        <el-tabs v-model="activeName" type="border-card" style="height:100%;">
+            <el-tab-pane label="服装领用" name="first">
+                <el-form :inline="true" label-width="100px">
+                    <el-form-item label="人员信息">
+                        <el-select v-model="clothingUserName" filterable placeholder="输入人员姓名" @change="userNameChange">
+                            <el-option v-for="item in userData" :key="item.id" :label="item.name" :value="item.name">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="所属项目">
+                        <el-select v-model="clothingUserProj" filterable placeholder="输入项目名称">
+                            <el-option v-for="item in userData" :key="item.id" :label="item.projName " :value="item.projName">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="所属部门">
+                        <el-select v-model="clothingUserDepartment" filterable placeholder="输入部门信息">
+                            <el-option v-for="item in userData" :key="item.id" :label="item.department " :value="item.department">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-form>
+                <el-form :inline="true" label-width="100px">
+                    <el-form-item label="物料代码">
+                        <el-select v-model="clothingType" filterable placeholder="请选择物料代码">
+                            <el-option v-for="item in clothingTypeData" :key="item.id" :label="item.type +' （ '+ item.name +' ）'" :value="item.type">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="尺寸类型">
+                        <el-select v-model="clothingSize" filterable placeholder="请选择服装尺寸">
+                            <el-option v-for="item in sizes" :key="item.id" :label="item.label " :value="item.label">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="领用件数">
+                        <el-input v-model="count" placeholder="输入新增数量"></el-input>
+                    </el-form-item>
+                    <div align="right">
+                        <el-button type="primary" @click='addClothingUsed'>添加领用</el-button>
+                    </div>
+                </el-form>
+                <div>
+                    <el-table :data="clothingUseData" style="height: : 100%;" height="620px">
+                        <el-table-column prop="name" label="人员名称">
+                        </el-table-column>
+                        <el-table-column prop="clothingType" label="物料代码">
+                        </el-table-column>
+                        <el-table-column prop="userProj" label="所属项目">
+                        </el-table-column>
+                        <el-table-column prop="userDepartment" label="所属部门">
+                        </el-table-column>
+                        <el-table-column prop="sizeType" label="领取型号">
+                        </el-table-column>
+                        <el-table-column prop="clothingCount" label="领取数量">
+                        </el-table-column>
+                    </el-table>
+                </div>
+            </el-tab-pane>
+        </el-tabs>
+    </div>
+</template>
+<style type="text/css">
+.el-upload {
+    width: 200px;
+    text-align: left !important;
+}
+</style>
+<script>
+import linkUrl from "../../link.js"
+export default {
+    data() {
+        return {
+            clothingUserName: '',
+            clothingUserProj: '',
+            clothingUserDepartment: '',
+            clothingType: '',
+            sizes: [{
+                id: 1,
+                value: 'S',
+                label: 'S'
+            }, {
+                id: 2,
+                value: 'M',
+                label: 'M'
+            }, {
+                id: 3,
+                value: 'L',
+                label: 'L'
+            }, {
+                id: 4,
+                value: 'XL',
+                label: 'XL'
+            }, {
+                id: 5,
+                value: 'XXL',
+                label: 'XXL'
+            }, {
+                id: 6,
+                value: 'XXXL',
+                label: 'XXXL'
+            }, {
+                id: 7,
+                value: 'XXXXL',
+                label: 'XXXXL'
+            }],
+            activeName: 'first',
+            clothingUseData: [],
+            clothingTypeData: [],
+            userData: [],
+            host: linkUrl["host"],
+            count: '1',
+            clothingSize: ''
+        }
+    },
+    mounted: function() {
+        this.userName = this.getCookie('name')
+        this.userSession = this.getCookie('session')
+        this.getClothingInfo()
+        this.getUserInfo()
+        this.getClothingUseInfo()
+    },
+    methods: {
+        userNameChange(name) {
+            console.log(name);
+            for (var item in this.userData) {
+                var itemValue = this.userData[item]
+                if (itemValue.name == name) {
+                    this.clothingUserProj = itemValue.projName
+                    this.clothingUserDepartment = itemValue.department
+                    break;
+                }
+            }
+        },
+        getUserInfo() {
+            this.$http.jsonp(this.host + "/getSimpleEmployeeInfo", {
+                params: {
+                    "name": this.userName,
+                    "session": this.userSession
+                }
+            }).then(function(res) {
+                console.log(res);
+                this.userData = res.data;
+            }, function(res) {
+                console.warn(res);
+            })
+        },
+        getClothingUseInfo() {
+            this.$http.jsonp(this.host + "/getClothingUseInfo", {
+                params: {
+                    "name": this.userName,
+                    "session": this.userSession
+                }
+            }).then(function(res) {
+                console.log(res);
+                this.clothingUseData = res.data;
+
+            }, function(res) {
+                console.warn(res);
+            })
+        },
+        addClothingUsed() {
+            this.$http.jsonp(this.host + "/addClothingUseInfo", {
+                params: {
+                    "name": this.userName,
+                    "session": this.userSession,
+                    "clothingUserName": this.clothingUserName,
+                    'clothingUserProj': this.clothingUserProj,
+                    'clothingUserDepartment': this.clothingUserDepartment,
+                    'clothingType': this.clothingType,
+                    'clothingSize': this.clothingSize,
+                    'count': this.count,
+                }
+            }).then(function(res) {
+                console.log(res);
+                if (res.data == "\"OK\"") {
+                    this.$message({
+                        message: '领用记录添加成功',
+                        type: 'success'
+                    });
+                    this.getClothingUseInfo()
+                }
+                else
+                {
+                    this.$message({
+                        message: '库存不足，请补充库存',
+                        type: 'error'
+                    });
+                }
+
+            }, function(res) {
+                this.$message({
+                    message: '领用记录添加失败',
+                    type: 'error'
+                });
+                console.warn(res);
+            })
+        },
+        getClothingInfo() {
+            this.$http.jsonp(this.host + "/getClothingInfo", {
+                params: {
+                    "name": this.userName,
+                    "session": this.userSession
+                }
+            }).then(function(res) {
+                this.clothingTypeData = res.data;
+                console.log(res);
+            }, function(res) {
+                console.warn(res);
+            })
+        },
+        getCookie(c_name) {
+            if (document.cookie.length > 0) {
+                var c_start = document.cookie.indexOf(c_name + "=")
+                if (c_start != -1) {
+                    c_start = c_start + c_name.length + 1
+                    var c_end = document.cookie.indexOf(";", c_start)
+                    if (c_end == -1) c_end = document.cookie.length
+                    return unescape(document.cookie.substring(c_start, c_end))
+                }
+            }
+            return ""
+        }
+    }
+}
+</script>

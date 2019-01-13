@@ -27,6 +27,7 @@ def ConnectSqlite():
 #### 关闭数据库链接
 def CloseSqlite():
     if g_dict.has_key("conn"):
+        g_dict["conn"].commit()
         g_dict["conn"].close()
         g_dict.clear()
 

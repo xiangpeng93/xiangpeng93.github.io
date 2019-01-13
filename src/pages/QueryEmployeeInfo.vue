@@ -444,7 +444,7 @@ export default {
     },
     data() {
         return {
-            loading:false,
+            loading: false,
             host: linkUrl["host"],
             userName: "",
             userSession: "",

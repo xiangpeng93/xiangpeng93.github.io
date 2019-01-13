@@ -5,7 +5,7 @@ from BaseHTTPServer import HTTPServer
 import cgi
 import json
 import urlparse
-
+import uuid
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -18,6 +18,7 @@ from userManger import *
 import operateEmployeeXls
 import operateWorkOverTimeXls
 import operateRewardXls
+import clothingManger
 class ProcessHandler(BaseHTTPRequestHandler):
     def do_OPTIONS(self):
         self.send_response(200, "ok")
@@ -88,7 +89,16 @@ class ProcessHandler(BaseHTTPRequestHandler):
                 data = json.dumps(dataResult,ensure_ascii=False)
                 content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
             self.wfile.write(content)
-            
+        elif urlResult.path == "/getSimpleEmployeeInfo":
+            content = "";
+            if CheckUserSession(dictParam["name"][0].decode('utf-8'),dictParam["session"][0]) != "OK":
+                content = '%s(%s)'%(dictParam["callback"][0],"")
+                print u"校验用户失败，检查输入信息",dictParam["name"][0].decode('utf-8'),dictParam["session"][0]
+            else:
+                data = json.dumps(GetSimpleEmployeeInfo(),ensure_ascii=False)
+                content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
+            self.wfile.write(content)
+                
         elif urlResult.path == "/queryEmployeeInfo":
             content = "";
             if CheckUserSession(dictParam["name"][0].decode('utf-8'),dictParam["session"][0]) != "OK":
@@ -181,6 +191,109 @@ class ProcessHandler(BaseHTTPRequestHandler):
             os._exit(1)
 ##        except Exception,error:
 ##            print "do get error",error
+        elif urlResult.path == "/addClothingType":
+            content = "";
+            if CheckUserSession(dictParam["name"][0].decode('utf-8'),dictParam["session"][0]) != "OK":
+                content = '%s(%s)'%(dictParam["callback"][0],"")
+                print u"校验用户失败，检查输入信息",dictParam["name"][0].decode('utf-8'),dictParam["session"][0]
+            else:
+                data = json.dumps(clothingManger.AddClothingInfo(dictParam["clothingName"][0].decode('utf-8'),
+                                                               dictParam["clothingType"][0].decode('utf-8'),
+                                                               dictParam["fileName"][0].decode('utf-8'),
+                                                               dictParam["S"][0].decode('utf-8'),
+                                                               dictParam["M"][0].decode('utf-8'),
+                                                               dictParam["L"][0].decode('utf-8'),
+                                                               dictParam["XL"][0].decode('utf-8'),
+                                                               dictParam["XXL"][0].decode('utf-8'),
+                                                               dictParam["XXXL"][0].decode('utf-8'),
+                                                               dictParam["XXXXL"][0].decode('utf-8')
+                                                               ),ensure_ascii=False)
+                content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
+            self.wfile.write(content)
+        elif urlResult.path == "/updateClothing":
+            content = "";
+            if CheckUserSession(dictParam["name"][0].decode('utf-8'),dictParam["session"][0]) != "OK":
+                content = '%s(%s)'%(dictParam["callback"][0],"")
+                print u"校验用户失败，检查输入信息",dictParam["name"][0].decode('utf-8'),dictParam["session"][0]
+            else:
+                data = json.dumps(clothingManger.ModClothingInfo(dictParam["clothingName"][0].decode('utf-8'),
+                                                               dictParam["clothingType"][0].decode('utf-8'),
+                                                               dictParam["fileName"][0].decode('utf-8'),
+                                                               dictParam["S"][0].decode('utf-8'),
+                                                               dictParam["M"][0].decode('utf-8'),
+                                                               dictParam["L"][0].decode('utf-8'),
+                                                               dictParam["XL"][0].decode('utf-8'),
+                                                               dictParam["XXL"][0].decode('utf-8'),
+                                                               dictParam["XXXL"][0].decode('utf-8'),
+                                                               dictParam["XXXXL"][0].decode('utf-8')
+                                                               ),ensure_ascii=False)
+                content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
+            self.wfile.write(content)
+        elif urlResult.path == "/addClothingUseInfo":
+            content = "";
+            if CheckUserSession(dictParam["name"][0].decode('utf-8'),dictParam["session"][0]) != "OK":
+                content = '%s(%s)'%(dictParam["callback"][0],"")
+                print u"校验用户失败，检查输入信息",dictParam["name"][0].decode('utf-8'),dictParam["session"][0]
+            else:
+                data = json.dumps(clothingManger.AddClothingUseInfo(dictParam["clothingUserName"][0].decode('utf-8'),
+                                                               dictParam["clothingUserProj"][0].decode('utf-8'),
+                                                               dictParam["clothingUserDepartment"][0].decode('utf-8'),
+                                                               dictParam["clothingType"][0].decode('utf-8'),
+                                                               dictParam["clothingSize"][0].decode('utf-8'),
+                                                               dictParam["count"][0].decode('utf-8')
+                                                               ),ensure_ascii=False)
+                content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
+            self.wfile.write(content)
+        elif urlResult.path == "/getClothingUseInfo":
+            content = "";
+            if CheckUserSession(dictParam["name"][0].decode('utf-8'),dictParam["session"][0]) != "OK":
+                content = '%s(%s)'%(dictParam["callback"][0],"")
+                print u"校验用户失败，检查输入信息",dictParam["name"][0].decode('utf-8'),dictParam["session"][0]
+            else:
+                data = json.dumps(clothingManger.GetClothingUseInfo(),ensure_ascii=False)
+                content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
+            self.wfile.write(content)
+        elif urlResult.path == "/getClothingInfo":
+            content = "";
+            if CheckUserSession(dictParam["name"][0].decode('utf-8'),dictParam["session"][0]) != "OK":
+                content = '%s(%s)'%(dictParam["callback"][0],"")
+                print u"校验用户失败，检查输入信息",dictParam["name"][0].decode('utf-8'),dictParam["session"][0]
+            else:
+                data = json.dumps(clothingManger.GetClothingInfo(),ensure_ascii=False)
+                content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
+            self.wfile.write(content)
+        elif urlResult.path == "/delClothingInfo":
+            content = "";
+            if CheckUserSession(dictParam["name"][0].decode('utf-8'),dictParam["session"][0]) != "OK":
+                content = '%s(%s)'%(dictParam["callback"][0],"")
+                print u"校验用户失败，检查输入信息",dictParam["name"][0].decode('utf-8'),dictParam["session"][0]
+            else:
+                data = json.dumps(clothingManger.DelClothingInfo(dictParam["clothingName"][0].decode('utf-8'),
+                                                               dictParam["clothingType"][0].decode('utf-8')),ensure_ascii=False)
+                content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
+            self.wfile.write(content)
+        elif urlResult.path == "/removeClothing":
+            content = "";
+            if CheckUserSession(dictParam["name"][0].decode('utf-8'),dictParam["session"][0]) != "OK":
+                content = '%s(%s)'%(dictParam["callback"][0],"")
+                print u"校验用户失败，检查输入信息",dictParam["name"][0].decode('utf-8'),dictParam["session"][0]
+            else:
+                data = json.dumps(clothingManger.RemoveClothing(dictParam["clothingType"][0].decode('utf-8'),
+                                                                dictParam["size"][0].decode('utf-8'),
+                                                                dictParam["num"][0].decode('utf-8')),ensure_ascii=False)
+                content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
+            self.wfile.write(content)
+        elif urlResult.path == "/addClothingNum":
+            content = "";
+            if CheckUserSession(dictParam["name"][0].decode('utf-8'),dictParam["session"][0]) != "OK":
+                content = '%s(%s)'%(dictParam["callback"][0],"")
+                print u"校验用户失败，检查输入信息",dictParam["name"][0].decode('utf-8'),dictParam["session"][0]
+            else:
+                data = json.dumps(clothingManger.AddClothingNum(dictParam["clothingType"][0].decode('utf-8'),
+                                                                dictParam["size"][0].decode('utf-8'),
+                                                                dictParam["num"][0].decode('utf-8')),ensure_ascii=False)
+                content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
+            self.wfile.write(content)
             
     def do_POST(self):
         print u"新POST请求进入','路径为：",self.path
@@ -281,7 +394,30 @@ class ProcessHandler(BaseHTTPRequestHandler):
                     f.write(filevalue)
                     f.close()
                     operateRewardXls.ProcessRewardXLS("reward.xlsx")
-        
+        if self.path == "/uploadClothingPicUrl":
+            form = cgi.FieldStorage(
+                fp=self.rfile,
+                headers=self.headers,
+                environ={'REQUEST_METHOD':'POST',
+                         'CONTENT_TYPE':self.headers['Content-Type']
+                         })
+            self.send_response(200)
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.end_headers()
+            self.wfile.write('Client: %sn ' % str(self.client_address) )
+            self.wfile.write('User-agent: %sn' % str(self.headers['user-agent']))
+            self.wfile.write('Path: %sn'%self.path)
+            self.wfile.write('Form data:n')
+            for field in form.keys():
+                field_item = form[field]
+                filename = field_item.filename.decode("utf-8")
+                filevalue  = field_item.value
+                filesize = len(filevalue)
+                print u"更新服装信息:",(filename),len(filevalue)
+                with open("./Img/Clothing/"+filename,'wb') as f:
+                    f.write(filevalue)
+                    f.close()
+
         return
     
 if __name__ == '__main__':

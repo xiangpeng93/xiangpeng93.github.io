@@ -6,6 +6,8 @@ import EmployeeInfos from "./pages/EmployeeInfos.vue"
 import QueryEmployeeInfo from "./pages/QueryEmployeeInfo.vue"
 import WorkOverTimeAnalyze from "./pages/WorkOverTimeAnalyze.vue"
 import RewardAnalyze from "./pages/RewardAnalyze.vue"
+import ClothingManger from "./pages/ClothingManger.vue"
+
 import Router from 'vue-router'
 export default new Router({
 	mode: 'hash',
@@ -30,6 +32,10 @@ export default new Router({
 	{
 		path: '/WorkOverTimeAnalyze',
 		component: WorkOverTimeAnalyze
+	},
+	{
+		path: '/ClothingManger',
+		component: ClothingManger
 	},
 	{
 		path: '/RewardAnalyze',

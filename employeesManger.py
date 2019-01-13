@@ -245,6 +245,26 @@ def QueryEmployeeInfo(key,value):
     CloseSqlite()
     return employeeInfosArray
 
+def GetSimpleEmployeeInfo():
+    employeeInfosArray = []
+    ConnectSqlite()
+    print u"简单查找雇员信息"
+    g_dict["cursor"].execute("select * from Employees ")
+    employeeInfos = g_dict["cursor"].fetchall();
+    id = 0;
+    for info in employeeInfos:
+        id += 1;
+        employeeInfo = {}
+        employeeInfo["id"] = id
+        employeeInfo["companyName"] = info[1]
+        employeeInfo["projName"] = info[2]
+        employeeInfo["department"] = info[3]
+        employeeInfo["job"] = info[4]
+        employeeInfo["name"] = info[5]
+        employeeInfosArray.append(employeeInfo)
+    CloseSqlite()
+    return employeeInfosArray
+
 def GetEmployeeByPage(pageNum,pageSize):
     employeeInfosArray = []
     ConnectSqlite()
