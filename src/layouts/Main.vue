@@ -9,11 +9,9 @@
                 <el-menu-item index="/WorkOverTimeAnalyze">加班统计</el-menu-item>
                 <el-menu-item index="/RewardAnalyze">奖励统计</el-menu-item>
                 <el-menu-item index="/ClothingManger">服装管理</el-menu-item>
-
 				<!--  <el-menu-item index="/About">其他信息</el-menu-item> -->
 				<el-submenu index="#" style="float:right;">
 					<template slot="title"><i class="el-icon-service"></i>{{userName}}</template>
-
 					<el-menu-item index="/ConfigInfo">配置信息</el-menu-item>
 					<el-menu-item index="#changePasswd">修改密码</el-menu-item>
 					<el-menu-item index='/'>退出登录</el-menu-item>
@@ -51,12 +49,12 @@
 				dialogFormVisible: false,
 				formLabelWidth: '100px',
 				host:linkUrl["host"] ,
-
 			};
 		},
 		mounted: function() {
 			this.userName = this.getCookie('name')
 			this.userSession = this.getCookie('session')
+			this.getUserInfo() 
 		},
 		methods: {
 			handleSelect(key, keyPath) {
@@ -94,6 +92,19 @@
             	}
             }, function(res) {
             	console.warn(res);
+            })
+        },
+        getUserInfo() {
+            this.$http.jsonp(this.host + "/getSimpleEmployeeInfo", {
+                params: {
+                    "name": this.userName,
+                    "session": this.userSession
+                }
+            }).then(function(res) {
+                console.log(res);
+            }, function(res) {
+            	this.logout()
+                console.warn(res);
             })
         },
         changePasswd() {

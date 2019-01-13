@@ -36,16 +36,19 @@ def RemoveClothing(clothingType,size,num):
             g_dict["cursor"].execute(sqlInfo)    
     CloseSqlite()
     return strRet
-def BackClothing(clothingType,size,num):
+def BackClothing(clothingType,sizeType,num):
     ConnectSqlite()
+    num = int(num)
     strRet = "OK"
-    args = (size,clothingType)
+    args = (sizeType,clothingType)
     print u"服装归还 ：",args
-    clothingSizes = g_dict["cursor"].execute("select ? from ClothingTypes where clothingType = ? ",args).fetchall()
+    clothingSizes = g_dict["cursor"].execute("select %s from ClothingTypes where  clothingType = '%s' "%args).fetchall()
     print clothingSizes
     for info in clothingSizes:
         currentNum = int(info[0])
-        g_dict["cursor"].execute("update ClothingTypes set ? = ? where clothingType = ? ",(size,currentNum + num,clothingType))    
+        sqlInfo = "update ClothingTypes set %s = '%d' where clothingType = '%s' "\
+                  %(sizeType,currentNum + num,clothingType)
+        g_dict["cursor"].execute(sqlInfo)
     CloseSqlite()
     return strRet
 def GetClothingInfo():
@@ -130,7 +133,7 @@ def GetClothingUseInfo():
     resArray = []
     ConnectSqlite()
     print u"获取服装使用信息"
-    clothingUseInfos = g_dict["cursor"].execute("select * from ClothingUsed order by id desc").fetchall()
+    clothingUseInfos = g_dict["cursor"].execute("select * from ClothingUsed  order by id desc limit 50").fetchall()
     CloseSqlite()
     for info in clothingUseInfos:
         tDict = {}
@@ -176,4 +179,19 @@ def AddClothingInfo(name,type,pic,s,m,l,xl,xxl,xxxl,xxxxl,rmb):
                              ?, ?, ?, ?, ?,?)",args)
     g_dict["conn"].commit()
     CloseSqlite()
+    return 'OK'
+
+def DelClothingUseInfo(name,type,time):
+    ConnectSqlite()
+    args = (name,type,time)
+    print u"删除服装使用信息：",args
+    g_dict["cursor"].execute("delete from ClothingUsed where name=? and clothingType=? and date=?",args)
+    CloseSqlite()
+    return 'OK'
+
+def BackClothingUseInfo(name,type,sizeType,time,num):
+    print name,type,sizeType,time,num
+    DelClothingUseInfo(name,type,time)
+    BackClothing(type,sizeType,num)
+    
     return 'OK'

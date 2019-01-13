@@ -306,6 +306,30 @@ class ProcessHandler(BaseHTTPRequestHandler):
                                                                 dictParam["end"][0].decode('utf-8')),ensure_ascii=False)
                 content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
             self.wfile.write(content)
+        elif urlResult.path == "/delClothingUseInfo":
+            content = "";
+            if CheckUserSession(dictParam["name"][0].decode('utf-8'),dictParam["session"][0]) != "OK":
+                content = '%s(%s)'%(dictParam["callback"][0],"")
+                print u"校验用户失败，检查输入信息",dictParam["name"][0].decode('utf-8'),dictParam["session"][0]
+            else:
+                data = json.dumps(clothingManger.DelClothingUseInfo(dictParam["clothingUseName"][0].decode('utf-8'),
+                                                                    dictParam["clothingType"][0].decode('utf-8'),
+                                                                    dictParam["time"][0].decode('utf-8')),ensure_ascii=False)
+                content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
+            self.wfile.write(content)
+        elif urlResult.path == "/backClothingUseInfo":
+            content = "";
+            if CheckUserSession(dictParam["name"][0].decode('utf-8'),dictParam["session"][0]) != "OK":
+                content = '%s(%s)'%(dictParam["callback"][0],"")
+                print u"校验用户失败，检查输入信息",dictParam["name"][0].decode('utf-8'),dictParam["session"][0]
+            else:
+                data = json.dumps(clothingManger.BackClothingUseInfo(dictParam["clothingUseName"][0].decode('utf-8'),
+                                                                    dictParam["clothingType"][0].decode('utf-8'),
+                                                                    dictParam["clothingSize"][0].decode('utf-8'),
+                                                                    dictParam["time"][0].decode('utf-8'),
+                                                                    dictParam["count"][0].decode('utf-8')),ensure_ascii=False)
+                content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
+            self.wfile.write(content)
             
     def do_POST(self):
         print u"新POST请求进入','路径为：",self.path

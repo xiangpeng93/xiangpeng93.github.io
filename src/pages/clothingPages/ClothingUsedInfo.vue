@@ -4,8 +4,8 @@
             <el-tab-pane label="服装领用" name="first">
                 <el-form :inline="true" label-width="100px">
                     <el-form-item label="人员信息">
-                        <el-select v-model="clothingUserName" filterable placeholder="输入人员姓名" @change="userNameChange" allow-create>
-                            <el-option v-for="item in userData" :key="item.id" :label="item.name" :value="item.name">
+                        <el-select v-model="clothingUserName" filterable placeholder="输入人员姓名" @change="userNameChange" allow-create :remote-method="remoteMethod" :loading="loading" remote>
+                            <el-option v-for="item in tUserData" :key="item.id" :label="item.name" :value="item.name">
                             </el-option>
                         </el-select>
                     </el-form-item>
@@ -44,6 +44,8 @@
                 </el-form>
                 <div>
                     <el-table :data="clothingUseData" style="height: : 100%;" height="620px">
+                        <el-table-column label="序号" type="index">
+                        </el-table-column>
                         <el-table-column prop="name" label="人员名称">
                         </el-table-column>
                         <el-table-column prop="clothingType" label="物料代码">
@@ -57,6 +59,12 @@
                         <el-table-column prop="clothingCount" label="领取数量">
                         </el-table-column>
                         <el-table-column prop="date" label="领取时间">
+                        </el-table-column>
+                        <el-table-column width="200">
+                            <template slot-scope="scope">
+                                <el-button size="mini" type="primary" @click="handleBack(scope.$index, scope.row)">归还</el-button>
+                                <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">报废</el-button>
+                            </template>
                         </el-table-column>
                     </el-table>
                 </div>
@@ -77,15 +85,18 @@
                         </el-form-item>
                     </el-form>
                     <el-form :inline="true" label-width="100px">
-                    <el-form-item label="项目名称">
-                        <el-input v-model="projName" placeholder="输入项目名称"></el-input>
-                    </el-form-item>
-                    <el-form-item label="部门名称">
-                        <el-input v-model="departmentName" placeholder="输入部门名称"></el-input>
-                    </el-form-item>
-                </el-form>
-                    <el-table :data="QueryUseInfoData.filter(data => data.userProj.toLowerCase().includes(projName.toLowerCase()) && data.userDepartment.toLowerCase().includes(departmentName.toLowerCase()))" style="height: : 100%;" height="650px">
-                         <el-table-column label="序号" type="index">
+                        <el-form-item label="人员名称">
+                            <el-input v-model="usedName" placeholder="输入人员名称"></el-input>
+                        </el-form-item>
+                        <el-form-item label="项目名称">
+                            <el-input v-model="projName" placeholder="输入项目名称"></el-input>
+                        </el-form-item>
+                        <el-form-item label="部门名称">
+                            <el-input v-model="departmentName" placeholder="输入部门名称"></el-input>
+                        </el-form-item>
+                    </el-form>
+                    <el-table :data="QueryUseInfoData.filter(data => data.userProj.toLowerCase().includes(projName.toLowerCase()) && data.userDepartment.toLowerCase().includes(departmentName.toLowerCase()) && data.name.toLowerCase().includes(usedName.toLowerCase()))" style="height: : 100%;" height="650px">
+                        <el-table-column label="序号" type="index">
                         </el-table-column>
                         <el-table-column prop="name" label="人员名称">
                         </el-table-column>
@@ -118,8 +129,9 @@ import linkUrl from "../../link.js"
 export default {
     data() {
         return {
-            departmentName:'',
-            projName:'',
+            usedName: '',
+            departmentName: '',
+            projName: '',
             timeStart: '',
             timeEnd: '',
             clothingUserName: '',
@@ -162,7 +174,9 @@ export default {
             QueryUseInfoData: [],
             host: linkUrl["host"],
             count: '1',
-            clothingSize: ''
+            clothingSize: '',
+            loading:true,
+            tUserData:[]
         }
     },
     mounted: function() {
@@ -173,8 +187,46 @@ export default {
         this.getClothingUseInfo()
     },
     methods: {
+        handleBack(rowIndex, row) {
+            console.log(row);
+            this.$http.jsonp(this.host + "/backClothingUseInfo", {
+                params: {
+                    "name": this.userName,
+                    "session": this.userSession,
+                    "clothingUseName": row.name,
+                    "clothingType": row.clothingType,
+                    "clothingSize": row.sizeType,
+                    "time": row.date,
+                    'count': row.clothingCount
+                }
+            }).then(function(res) {
+                console.log(res);
+                this.clothingUseData = []
+                this.getClothingUseInfo()
+            }, function(res) {
+                console.warn(res);
+            })
+        },
+        handleDelete(rowIndex, row) {
+            console.log(row);
+            this.$http.jsonp(this.host + "/delClothingUseInfo", {
+                params: {
+                    "name": this.userName,
+                    "session": this.userSession,
+                    "clothingUseName": row.name,
+                    "clothingType": row.clothingType,
+                    "time": row.date
+                }
+            }).then(function(res) {
+                console.log(res);
+                this.clothingUseData = []
+                this.getClothingUseInfo()
+            }, function(res) {
+                console.warn(res);
+            })
+        },
         queryUseInfo() {
-            console.log(this.timeStart,this.timeEnd)
+            console.log(this.timeStart, this.timeEnd)
             this.$http.jsonp(this.host + "/queryClothingUseInfo", {
                 params: {
                     "name": this.userName,
@@ -274,6 +326,21 @@ export default {
             }, function(res) {
                 console.warn(res);
             })
+        },
+        remoteMethod(query) {
+            console.log(query)
+            if (query !== '') {
+                this.loading = true;
+                setTimeout(() => {
+                    this.loading = false;
+                    this.tUserData = this.userData.filter(item => {
+                        return item.name.toLowerCase()
+                            .indexOf(query.toLowerCase()) > -1;
+                    });
+                }, 200);
+            } else {
+                this.tUserData = [];
+            }
         },
         getCookie(c_name) {
             if (document.cookie.length > 0) {
