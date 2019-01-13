@@ -33,7 +33,7 @@ class ProcessHandler(BaseHTTPRequestHandler):
         urlResult = urlparse.urlparse(self.path)
         dictParam = urlparse.parse_qs(urlResult.query)
         
-        print urlResult,dictParam
+        #print urlResult,dictParam
         
         self.send_response(200)
         self.send_header('Content-type', 'application/json')
@@ -292,6 +292,16 @@ class ProcessHandler(BaseHTTPRequestHandler):
                 data = json.dumps(clothingManger.AddClothingNum(dictParam["clothingType"][0].decode('utf-8'),
                                                                 dictParam["size"][0].decode('utf-8'),
                                                                 dictParam["num"][0].decode('utf-8')),ensure_ascii=False)
+                content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
+            self.wfile.write(content)
+        elif urlResult.path == "/queryClothingUseInfo":
+            content = "";
+            if CheckUserSession(dictParam["name"][0].decode('utf-8'),dictParam["session"][0]) != "OK":
+                content = '%s(%s)'%(dictParam["callback"][0],"")
+                print u"校验用户失败，检查输入信息",dictParam["name"][0].decode('utf-8'),dictParam["session"][0]
+            else:
+                data = json.dumps(clothingManger.GetClothingUseInfoByDate(dictParam["start"][0].decode('utf-8'),
+                                                                dictParam["end"][0].decode('utf-8')),ensure_ascii=False)
                 content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
             self.wfile.write(content)
             

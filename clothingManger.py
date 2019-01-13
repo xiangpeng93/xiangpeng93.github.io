@@ -1,5 +1,6 @@
 # -*- coding: cp936 -*-
 from operateSqlite import *
+import time
 def AddClothingNum(clothingType,size,num):
     ConnectSqlite()
     num = int(num)
@@ -111,11 +112,12 @@ def AddClothingUseInfo(name,proj,department,clothingType,sizeType,count):
     if RemoveClothing(clothingType,sizeType,count) != "OK":
         return "LESS"
     ConnectSqlite()
-    args = (name,proj,department,clothingType,sizeType,count)
+    date = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) 
+    args = (name,proj,department,clothingType,sizeType,count,date)
     print u"添加服装使用信息：",args
     g_dict["cursor"].execute("insert into ClothingUsed(name, userProj, userDepartment,clothingType,\
-                             sizeType,clothingCount ) VALUES (?, ?, ?, ?, ?,\
-                             ?)",args)
+                             sizeType,clothingCount,date ) VALUES (?, ?, ?, ?, ?,\
+                             ?,?)",args)
     g_dict["conn"].commit()
     CloseSqlite()
     return 'OK'
@@ -134,8 +136,30 @@ def GetClothingUseInfo():
         tDict["userProj"] = info[4]
         tDict["userDepartment"] = info[5]
         tDict["clothingCount"] = info[6]
+        tDict["date"] = info[7]
         resArray.append(tDict)
     return resArray
+
+def GetClothingUseInfoByDate(start,end):
+    resArray = []
+    ConnectSqlite()
+    args = (start,end)
+    print u"通过时间查询服装使用信息",args
+    clothingUseInfos = g_dict["cursor"].execute("select * from ClothingUsed where date BETWEEN ? AND ? order by id desc",args).fetchall()
+    CloseSqlite()
+    for info in clothingUseInfos:
+        tDict = {}
+        tDict["id"] = info[0]
+        tDict["name"] = info[1]
+        tDict["sizeType"] = info[2]
+        tDict["clothingType"] = info[3]
+        tDict["userProj"] = info[4]
+        tDict["userDepartment"] = info[5]
+        tDict["clothingCount"] = info[6]
+        tDict["date"] = info[7]
+        resArray.append(tDict)
+    return resArray
+
 def AddClothingInfo(name,type,pic,s,m,l,xl,xxl,xxxl,xxxxl):
     if (CheckClothingInfo(name,type)):
         return 'FAILED'

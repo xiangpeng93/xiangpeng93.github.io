@@ -4,7 +4,7 @@
             <el-tab-pane label="服装领用" name="first">
                 <el-form :inline="true" label-width="100px">
                     <el-form-item label="人员信息">
-                        <el-select v-model="clothingUserName" filterable placeholder="输入人员姓名" @change="userNameChange">
+                        <el-select v-model="clothingUserName" filterable placeholder="输入人员姓名" @change="userNameChange" allow-create>
                             <el-option v-for="item in userData" :key="item.id" :label="item.name" :value="item.name">
                             </el-option>
                         </el-select>
@@ -56,6 +56,51 @@
                         </el-table-column>
                         <el-table-column prop="clothingCount" label="领取数量">
                         </el-table-column>
+                        <el-table-column prop="date" label="领取时间">
+                        </el-table-column>
+                    </el-table>
+                </div>
+            </el-tab-pane>
+            <el-tab-pane label="领用查询" name="second">
+                <div>
+                    <el-form :inline="true" label-width="100px">
+                        <el-form-item label="开始日期">
+                            <el-date-picker value-format="yyyy-MM-dd HH:mm:ss" v-model="timeStart" type="date" placeholder="选择日期">
+                            </el-date-picker>
+                        </el-form-item>
+                        <el-form-item label="结束日期">
+                            <el-date-picker value-format="yyyy-MM-dd HH:mm:ss" v-model="timeEnd" type="date" placeholder="选择日期">
+                            </el-date-picker>
+                        </el-form-item>
+                        <el-form-item label="">
+                            <el-button type="primary" @click="queryUseInfo">开始查询</el-button>
+                        </el-form-item>
+                    </el-form>
+                    <el-form :inline="true" label-width="100px">
+                    <el-form-item label="项目名称">
+                        <el-input v-model="projName" placeholder="输入项目名称"></el-input>
+                    </el-form-item>
+                    <el-form-item label="部门名称">
+                        <el-input v-model="departmentName" placeholder="输入部门名称"></el-input>
+                    </el-form-item>
+                </el-form>
+                    <el-table :data="QueryUseInfoData.filter(data => data.userProj.toLowerCase().includes(projName.toLowerCase()) && data.userDepartment.toLowerCase().includes(departmentName.toLowerCase()))" style="height: : 100%;" height="650px">
+                         <el-table-column label="序号" type="index">
+                        </el-table-column>
+                        <el-table-column prop="name" label="人员名称">
+                        </el-table-column>
+                        <el-table-column prop="clothingType" label="物料代码">
+                        </el-table-column>
+                        <el-table-column prop="userProj" label="所属项目">
+                        </el-table-column>
+                        <el-table-column prop="userDepartment" label="所属部门">
+                        </el-table-column>
+                        <el-table-column prop="sizeType" label="领取型号">
+                        </el-table-column>
+                        <el-table-column prop="clothingCount" label="领取数量">
+                        </el-table-column>
+                        <el-table-column prop="date" label="领取时间">
+                        </el-table-column>
                     </el-table>
                 </div>
             </el-tab-pane>
@@ -73,6 +118,10 @@ import linkUrl from "../../link.js"
 export default {
     data() {
         return {
+            departmentName:'',
+            projName:'',
+            timeStart: '',
+            timeEnd: '',
             clothingUserName: '',
             clothingUserProj: '',
             clothingUserDepartment: '',
@@ -110,6 +159,7 @@ export default {
             clothingUseData: [],
             clothingTypeData: [],
             userData: [],
+            QueryUseInfoData: [],
             host: linkUrl["host"],
             count: '1',
             clothingSize: ''
@@ -123,6 +173,22 @@ export default {
         this.getClothingUseInfo()
     },
     methods: {
+        queryUseInfo() {
+            console.log(this.timeStart,this.timeEnd)
+            this.$http.jsonp(this.host + "/queryClothingUseInfo", {
+                params: {
+                    "name": this.userName,
+                    "session": this.userSession,
+                    "start": this.timeStart,
+                    "end": this.timeEnd
+                }
+            }).then(function(res) {
+                console.log(res);
+                this.QueryUseInfoData = res.data;
+            }, function(res) {
+                console.warn(res);
+            })
+        },
         userNameChange(name) {
             console.log(name);
             for (var item in this.userData) {
@@ -171,7 +237,7 @@ export default {
                     'clothingUserDepartment': this.clothingUserDepartment,
                     'clothingType': this.clothingType,
                     'clothingSize': this.clothingSize,
-                    'count': this.count,
+                    'count': this.count
                 }
             }).then(function(res) {
                 console.log(res);
@@ -181,9 +247,7 @@ export default {
                         type: 'success'
                     });
                     this.getClothingUseInfo()
-                }
-                else
-                {
+                } else {
                     this.$message({
                         message: '库存不足，请补充库存',
                         type: 'error'
