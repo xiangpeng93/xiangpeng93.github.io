@@ -37,6 +37,9 @@
                     <el-form-item label="XXXXL码">
                         <el-input v-model="XXXXL" placeholder="输入XXXXL码数量"></el-input>
                     </el-form-item>
+                    <el-form-item label="单价">
+                        <el-input v-model="rmb" placeholder="输入服装单价"></el-input>
+                    </el-form-item>
                     <el-form-item>
                         <el-button style="width: 100%" type="primary" @click='uploadClothing'>上传服装</el-button>
                     </el-form-item>
@@ -47,11 +50,14 @@
                         </el-table-column>
                         <el-table-column prop="type" label="物料代码" width="180">
                         </el-table-column>
+                        <el-table-column prop="rmb" label="服装单价" width="180">
+                        </el-table-column>
                         <el-table-column prop="pic" label="服装图片">
                             <template slot-scope="scope">
                                 <img width="100px" height="100px" :src="scope.row.pic"></img>
                             </template>
                         </el-table-column>
+
                         <el-table-column label="操作">
                             <template slot-scope="scope">
                                 <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
@@ -86,6 +92,7 @@ export default {
             XXL: '0',
             XXXL: '0',
             XXXXL: '0',
+            rmb:'0',
             tableData: [{ 'name': "test", 'type': '1212', 'pic': '/logo.jpg' }]
         }
     },
@@ -137,6 +144,7 @@ export default {
                     'XXL': this.XXL,
                     'XXXL': this.XXXL,
                     'XXXXL': this.XXXXL,
+                    'rmb':this.rmb
                 }
             }).then(function(res) {
                 if (res.data == "\"OK\"") {

@@ -69,6 +69,11 @@ def GetClothingInfo():
         tDict['XXL'] = info[8]
         tDict['XXXL'] = info[9]
         tDict['XXXXL'] = info[10]
+        tDict['rmb'] = info[11]
+        tDict['AllCount'] = int(info[4]) + int(info[5]) \
+                            +int(info[6]) +int(info[7]) \
+                            +int(info[8]) +int(info[9]) \
+                            +int(info[10]) 
         resArray.append(tDict)
     CloseSqlite()
     return resArray
@@ -95,16 +100,16 @@ def CheckClothingInfo(name,clothingType):
         return False
     return True
 
-def ModClothingInfo(name,type,pic,s,m,l,xl,xxl,xxxl,xxxxl):
+def ModClothingInfo(name,type,pic,s,m,l,xl,xxl,xxxl,xxxxl,rmb):
     if (CheckClothingInfo(name,type)) != True:
         return 'FAILED'
     ConnectSqlite()
-    args = (name,type,pic,s,m,l,xl,xxl,xxxl,xxxxl)
+    args = (name,type,pic,s,m,l,xl,xxl,xxxl,xxxxl,rmb)
     print u"更新服装信息：",args
     g_dict["cursor"].execute("delete from ClothingTypes where clothingName = ? and clothingType = ? ",(name,type))
     g_dict["cursor"].execute("insert into ClothingTypes(clothingName, clothingType, picPath,S,\
-                             M, L, XL, XXL, XXXL, XXXXL) VALUES (?, ?, ?, ?, ?,\
-                             ?, ?, ?, ?, ?)",args)
+                             M, L, XL, XXL, XXXL, XXXXL,rmb) VALUES (?, ?, ?, ?, ?,\
+                             ?, ?, ?, ?, ?,?)",args)
     g_dict["conn"].commit()
     CloseSqlite()
     return 'OK'
@@ -160,15 +165,15 @@ def GetClothingUseInfoByDate(start,end):
         resArray.append(tDict)
     return resArray
 
-def AddClothingInfo(name,type,pic,s,m,l,xl,xxl,xxxl,xxxxl):
+def AddClothingInfo(name,type,pic,s,m,l,xl,xxl,xxxl,xxxxl,rmb):
     if (CheckClothingInfo(name,type)):
         return 'FAILED'
     ConnectSqlite()
-    args = (name,type,pic,s,m,l,xl,xxl,xxxl,xxxxl)
+    args = (name,type,pic,s,m,l,xl,xxl,xxxl,xxxxl,rmb)
     print u"添加服装信息：",args
     g_dict["cursor"].execute("insert into ClothingTypes(clothingName, clothingType, picPath,S,\
-                             M, L, XL, XXL, XXXL, XXXXL) VALUES (?, ?, ?, ?, ?,\
-                             ?, ?, ?, ?, ?)",args)
+                             M, L, XL, XXL, XXXL, XXXXL,rmb) VALUES (?, ?, ?, ?, ?,\
+                             ?, ?, ?, ?, ?,?)",args)
     g_dict["conn"].commit()
     CloseSqlite()
     return 'OK'

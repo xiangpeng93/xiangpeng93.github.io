@@ -37,6 +37,10 @@
                         </el-table-column>
                         <el-table-column prop="XXXXL" label="4XL码数量">
                         </el-table-column>
+                        <el-table-column prop="AllCount" label="服装总数量">
+                        </el-table-column>
+                        <el-table-column prop="rmb" label="单价">
+                        </el-table-column>
                     </el-table>
                 </div>
             </el-tab-pane>
@@ -88,6 +92,10 @@
                         </el-table-column>
                         <el-table-column prop="XXXXL" label="4XL码数量">
                         </el-table-column>
+                        <el-table-column prop="AllCount" label="服装总数量">
+                        </el-table-column>
+                         <el-table-column prop="rmb" label="单价">
+                        </el-table-column>
                         <el-table-column>
                             <template slot-scope="scope">
                                 <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
@@ -131,6 +139,9 @@
                 <el-form-item label="XXXXL码">
                     <el-input v-model="XXXXL" placeholder="输入XXXXL码数量"></el-input>
                 </el-form-item>
+                <el-form-item label="单价">
+                    <el-input v-model="rmb" placeholder="输入服装单价"></el-input>
+                </el-form-item>
             </el-form>
             <div align="right">
                 <el-button type="primary" @click='updateClothing'>更新服装信息</el-button>
@@ -149,6 +160,7 @@ import linkUrl from "../../link.js"
 export default {
     data() {
         return {
+        	rmb:'',
             clothingModName: '',
             clothingModType: '',
             clothingPic: '',
@@ -221,6 +233,7 @@ export default {
                     'XXL': this.XXL,
                     'XXXL': this.XXXL,
                     'XXXXL': this.XXXXL,
+                    'rmb':this.rmb
                 }
             }).then(function(res) {
                 if (res.data == "\"OK\"") {
@@ -257,6 +270,7 @@ export default {
             this.clothingModName = row.name
             this.clothingModType = row.type
             this.clothingPic = row.pic
+            this.rmb = row.rmb
         },
         updateClothingInfo() {
             this.$http.jsonp(this.host + "/addClothingNum", {
