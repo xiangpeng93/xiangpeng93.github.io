@@ -95,6 +95,7 @@ export default {
                 }
             }, function(res) {
                 console.warn(res);
+                this.tipLoginNetError()
             })
         },
         setCookie(c_name, value, expiredays) {
@@ -102,6 +103,9 @@ export default {
             exdate.setDate(exdate.getDate())
             document.cookie = c_name + "=" + escape(value) +
                 ((expiredays == null) ? "" : ";expires=0")
+        },
+        tipLoginNetError() {
+            this.$message.error('网络错误，请联系管理员！');
         },
         tipLoginError() {
             this.$message.error('密码错误了哦！不是你吗？');

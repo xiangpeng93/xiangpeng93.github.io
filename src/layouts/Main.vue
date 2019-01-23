@@ -1,42 +1,45 @@
 <template>
 	<div>
 		<div>
-			<el-menu :default-active="$route.path" class="el-menu-demo" mode="horizontal" @select="handleSelect" router>
-				<el-menu-item index="/Home" align="center" style="width: 200px"><i class="el-icon-document"></i><b>彭梦瑶的人事系统
-				</b></el-menu-item>
-                <el-menu-item index="/EmployeeInfos">组织人员信息</el-menu-item>
-				<el-menu-item index="/QueryEmployeeInfo">雇员信息查询</el-menu-item>
-                <el-menu-item index="/WorkOverTimeAnalyze">加班统计</el-menu-item>
-                <el-menu-item index="/RewardAnalyze">奖励统计</el-menu-item>
-                <el-menu-item index="/ClothingManger">服装管理</el-menu-item>
-				<!--  <el-menu-item index="/About">其他信息</el-menu-item> -->
-				<el-submenu index="#" style="float:right;">
-					<template slot="title"><i class="el-icon-service"></i>{{userName}}</template>
-					<el-menu-item index="/ConfigInfo">配置信息</el-menu-item>
-					<el-menu-item index="#changePasswd">修改密码</el-menu-item>
-					<el-menu-item index='/'>退出登录</el-menu-item>
-					<el-menu-item index="#updateVersion">更新版本</el-menu-item>
+			<el-menu :default-active="$route.path" class="el-menu-demo" mode="horizontal" @select="handleSelect" router
+            background-color="#545c64"
+            text-color="#fff"
+            active-text-color="#ffd04b">
+            <el-menu-item index="/Home" align="center" style="width: 200px"><i class="el-icon-document"></i><b>彭梦瑶的人事系统
+            </b></el-menu-item>
+            <el-menu-item index="/EmployeeInfos">组织人员信息</el-menu-item>
+            <el-menu-item index="/QueryEmployeeInfo">雇员信息查询</el-menu-item>
+            <el-menu-item index="/WorkOverTimeAnalyze">加班统计</el-menu-item>
+            <el-menu-item index="/RewardAnalyze">奖励统计</el-menu-item>
+            <el-menu-item index="/ClothingManger">服装管理</el-menu-item>
+            <!--  <el-menu-item index="/About">其他信息</el-menu-item> -->
+            <el-submenu index="#" style="float:right;">
+               <template slot="title"><i class="el-icon-service"></i>{{userName}}</template>
+               <el-menu-item index="/ConfigInfo">配置信息</el-menu-item>
+               <el-menu-item index="#changePasswd">修改密码</el-menu-item>
+               <el-menu-item index='/'>退出登录</el-menu-item>
+               <el-menu-item index="#updateVersion">更新版本</el-menu-item>
 
-				</el-submenu>
-			</el-menu>
+           </el-submenu>
+       </el-menu>
 
-			<el-dialog title="修改密码" :visible.sync="dialogFormVisible" width="30%">
-				<el-form>
-					<el-form-item label="用户名称：" :label-width="formLabelWidth">
-						<el-input v-model="userName" autocomplete="off"></el-input>
-					</el-form-item>
-					<el-form-item label="新密码：" :label-width="formLabelWidth">
-						<el-input v-model="userPasswd" autocomplete="off"></el-input>
-					</el-form-item>
-				</el-form>
-				<div slot="footer" class="dialog-footer">
-					<el-button @click="dialogFormVisible = false">取 消</el-button>
-					<el-button type="primary" @click="changePasswd">确 定</el-button>
-				</div>
-			</el-dialog>
-		</div>
-		<slot></slot>
-	</div>
+       <el-dialog title="修改密码" :visible.sync="dialogFormVisible" width="30%">
+        <el-form>
+           <el-form-item label="用户名称：" :label-width="formLabelWidth">
+              <el-input v-model="userName" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="新密码：" :label-width="formLabelWidth">
+              <el-input v-model="userPasswd" autocomplete="off"></el-input>
+          </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+       <el-button @click="dialogFormVisible = false">取 消</el-button>
+       <el-button type="primary" @click="changePasswd">确 定</el-button>
+   </div>
+</el-dialog>
+</div>
+<slot></slot>
+</div>
 </template>
 <script>
 	import linkUrl from "../link.js"
@@ -51,7 +54,7 @@
 				host:linkUrl["host"] ,
 			};
 		},
-		mounted: function() {
+		beforeMount: function() {
 			this.userName = this.getCookie('name')
 			this.userSession = this.getCookie('session')
 			this.getUserInfo() 
@@ -69,8 +72,9 @@
 				{
 					this.updateVersion()
 				}
-			},
-			updateVersion(){
+                this.getUserInfo() 
+            },
+            updateVersion(){
             //发送get请求
             this.$http.jsonp(this.host+"/updateVersion", {
             	params: {

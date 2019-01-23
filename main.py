@@ -56,6 +56,7 @@ class ProcessHandler(BaseHTTPRequestHandler):
             if CheckUserSession(dictParam["name"][0].decode('utf-8'),dictParam["session"][0]) != "OK":
                 content = '%s(%s)'%(dictParam["callback"][0],"")
                 print u"校验用户失败，检查输入信息",dictParam["name"][0].decode('utf-8'),dictParam["session"][0]
+                return
         except Exception,error:
             print "check user error: ",error
             return;
