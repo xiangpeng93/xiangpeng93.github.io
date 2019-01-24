@@ -19,6 +19,7 @@ import operateEmployeeXls
 import operateWorkOverTimeXls
 import operateRewardXls
 import clothingManger
+import operateTax
 class ProcessHandler(BaseHTTPRequestHandler):
     def do_OPTIONS(self):
         self.send_response(200, "ok")
@@ -244,9 +245,18 @@ class ProcessHandler(BaseHTTPRequestHandler):
                                                                     dictParam["count"][0].decode('utf-8')),ensure_ascii=False)
             content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
             self.wfile.write(content)
+        ## 获取税金信息
+        elif urlResult.path == "/getTaxByMonth":
+            data = json.dumps(operateTax.GetTaxData(dictParam["month"][0].decode('utf-8')),
+                              ensure_ascii=False)
+            content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
+            self.wfile.write(content)
             
     def do_POST(self):
         print u"新POST请求进入','路径为：",self.path
+        urlResult = urlparse.urlparse(self.path)
+        dictParam = urlparse.parse_qs(urlResult.query)
+##        print urlResult,dictParam
         form = cgi.FieldStorage(
                 fp=self.rfile,
                 headers=self.headers,
@@ -320,6 +330,20 @@ class ProcessHandler(BaseHTTPRequestHandler):
                 with open("./Img/Clothing/"+filename,'wb') as f:
                     f.write(filevalue)
                     f.close()
+        ## 导入个人所得税信息
+        if urlResult.path == "/UploadCurrentSalary":
+            date = dictParam["taxMonth"][0]
+            print date
+            for field in form.keys():
+                field_item = form[field]
+                filename = field_item.filename.decode("utf-8")
+                filevalue = field_item.value
+                filesize = len(filevalue)
+                print u"导入个人所得税信息:",(filename),len(filevalue)
+                with open("taxTmp.xls",'wb') as f:
+                    f.write(filevalue)
+                    f.close()
+                operateTax.ProcessTaxXLS(date,"taxTmp.xls")
 
         return
     

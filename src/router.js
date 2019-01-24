@@ -7,6 +7,7 @@ import QueryEmployeeInfo from "./pages/QueryEmployeeInfo.vue"
 import WorkOverTimeAnalyze from "./pages/WorkOverTimeAnalyze.vue"
 import RewardAnalyze from "./pages/RewardAnalyze.vue"
 import ClothingManger from "./pages/ClothingManger.vue"
+import TaxManger from "./pages/TaxManger.vue"
 
 import Router from 'vue-router'
 export default new Router({
@@ -44,6 +45,10 @@ export default new Router({
 	{    
 		path: '/ConfigInfo',
 		component: ConfigInfo
+	},
+	{    
+		path: '/TaxManger',
+		component: TaxManger
 	},
 	{
 		path: '/About',

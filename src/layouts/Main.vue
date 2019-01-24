@@ -12,6 +12,7 @@
             <el-menu-item index="/WorkOverTimeAnalyze">加班统计</el-menu-item>
             <el-menu-item index="/RewardAnalyze">奖励统计</el-menu-item>
             <el-menu-item index="/ClothingManger">服装管理</el-menu-item>
+            <el-menu-item index="/TaxManger">个人所得税</el-menu-item>
             <!--  <el-menu-item index="/About">其他信息</el-menu-item> -->
             <el-submenu index="#" style="float:right;">
                <template slot="title"><i class="el-icon-service"></i>{{userName}}</template>
