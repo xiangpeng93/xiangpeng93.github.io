@@ -54,12 +54,17 @@
             </el-table-column>
             <el-table-column prop="currentSalary" label="当月收入">
             </el-table-column>
+            <el-table-column prop="comunicationCost" label="通信费">
+            </el-table-column>
+            <el-table-column prop="socialSecurity" label="社保缴纳">
+            </el-table-column>
+            <el-table-column prop="customCutout" label="专项扣除">
+            </el-table-column>
             <el-table-column prop="currentNeedTaxNumber" label="当月应缴纳所得额" width="150">
             </el-table-column>
             <el-table-column prop="yearTaxNumber" label="累计应缴纳所得额" width="140">
             </el-table-column>
-            <el-table-column prop="customCutout" label="专项扣除">
-            </el-table-column>
+            
             <el-table-column prop="currentTax" label="当月税金">
             </el-table-column>
             <el-table-column prop="yearTax" label="累计税金">

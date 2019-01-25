@@ -70,6 +70,8 @@ def _getMonthTaxInfo(date):
             result["currentTax"] = info[9]
             result["yearTax"] = info[10]
             result["date"] = info[11]
+            result["comunicationCost"] = info[12]
+            result["socialSecurity"] = info[13]
             taxResults.append(result)
     except Exception,error:
         print "error ",error
@@ -97,6 +99,8 @@ def _getMonthsTaxInfo(dateStart,dateEnd):
             result["currentTax"] = info[9]
             result["yearTax"] = info[10]
             result["date"] = info[11]
+            result["comunicationCost"] = info[12]
+            result["socialSecurity"] = info[13]
             taxResults.append(result)
     except Exception,error:
         print "error ",error
@@ -121,8 +125,9 @@ def _insertTaxInfo(info):
         operateSqlite.ConnectSqlite()
         operateSqlite.g_dict["cursor"].execute("insert into TaxInfos(name, comp,department,job, \
                                                 currentSalary,currentNeedTaxNumber,\
-                                               yearTaxNumber,customCutout, currentTax,yearTax, date) \
-                                               VALUES(?,?,?,?,?,?,?,?,?,?,?)",info)
+                                               yearTaxNumber,customCutout, currentTax,yearTax, date,\
+                                               comunicationCost,socialSecurity) \
+                                               VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",info)
     except Exception,error:
         print "error ",error
         pass
@@ -167,12 +172,48 @@ def ProcessTaxXLS(date,fileName):
                                 break;
                         ## 收入
                         salary = float(rowValue[1])
+                        ## 通信费用
+                        cut1 = 0.0
+                        ## 三险一金费用
+                        cut2 = 0.0
+                        ## 专项扣除1
+                        cut3 = 0.0
+                        ## 专项扣除2
+                        cut4 = 0.0
+                        ## 专项扣除3
+                        cut5 = 0.0
+                        ## 专项扣除4
+                        cut6 = 0.0
+                        ## 专项扣除5
+                        cut7 = 0.0
+                        ## 专项扣除6
+                        cut8 = 0.0
+                        try:
+                            if rowValue[2] != "" :
+                                cut1 = float(rowValue[2])
+                            if rowValue[3] != "" :
+                                cut2 = float(rowValue[3])
+                            if rowValue[4] != "" :
+                                cut3 = float(rowValue[4])
+                            if rowValue[5] != "" :
+                                cut4 = float(rowValue[5])
+                            if rowValue[6] != "" :
+                                cut5 = float(rowValue[6])
+                            if rowValue[7] != "" :
+                                cut6 = float(rowValue[7])
+                            if rowValue[8] != "" :
+                                cut7 = float(rowValue[8])
+                            if rowValue[9] != "" :
+                                cut8 = float(rowValue[9])
+                        except Exception,error:
+                            print u"解析专项扣除失败",error
                         currentSalary = salary
-                        salary = salary - 5000
+                        ## 计算所需缴纳税金
+                        salary = salary - 5000 - cut1 - cut2 - cut3 - cut4 - cut5 - cut6 - cut7 - cut8
                         
                         currentNeedTaxNumber = 0.0
                         yearTaxNumber = 0.0
-                        customCutout = 0.0
+                        customCutout = cut3+cut4+cut5+cut6+cut7+cut8
                         currentTax = 0.0
                         yearTax = 0.0
                         ## 假如存在历史数据
@@ -230,7 +271,7 @@ def ProcessTaxXLS(date,fileName):
                             print u"当月税金",currentTax,u"当年税金",yearTax,u"年度累计应纳税总额",yearTaxNumber
                             pass
                         _insertTaxInfo((name,comp,department,job,currentSalary,currentNeedTaxNumber,
-                                        yearTaxNumber,customCutout,currentTax,yearTax,date))
+                                        yearTaxNumber,customCutout,currentTax,yearTax,date,cut1,cut2))
                         print name,salary
                     except Exception,error:
                         print "parse row error",error
