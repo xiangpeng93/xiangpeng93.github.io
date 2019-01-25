@@ -77,6 +77,34 @@ def _getMonthTaxInfo(date):
     finally:
         operateSqlite.CloseSqlite()
     return taxResults
+
+def _getMonthsTaxInfo(dateStart,dateEnd):
+    taxResults = [] 
+    try:
+        operateSqlite.ConnectSqlite()
+        operateSqlite.g_dict["cursor"].execute( str("select * from TaxInfos where date >= '%s' and date <='%s' order by date"%(dateStart,dateEnd)))
+        taxInfos = operateSqlite.g_dict["cursor"].fetchall();
+        for info in taxInfos:
+            result = {}
+            result["name"] = info[1]
+            result["comp"] = info[2]
+            result["department"] = info[3]
+            result["job"] = info[4]
+            result["currentSalary"] = info[5]
+            result["currentNeedTaxNumber"] = info[6]
+            result["yearTaxNumber"] = info[7]
+            result["customCutout"] = info[8]
+            result["currentTax"] = info[9]
+            result["yearTax"] = info[10]
+            result["date"] = info[11]
+            taxResults.append(result)
+    except Exception,error:
+        print "error ",error
+        pass
+    finally:
+        operateSqlite.CloseSqlite()
+    return taxResults
+
 ## 根据月份删除个税信息
 def _deleteTaxInfoByDate(date):
     try:
@@ -216,6 +244,10 @@ def ProcessTaxXLS(date,fileName):
 
 ##ProcessTaxXLS("2019-02","testTax.xlsx")
 def GetTaxData(date):
-    print u"获取所得税信息信息"
+    print u"获取所得税信息信息",date
     return _getMonthTaxInfo(date)
 ##print GetTaxData("2019-02")
+
+def GetTaxDataByMonths(dateStart,dateEnd):
+    print u"根据月份获取所得税信息信息",dateStart,dateEnd
+    return _getMonthsTaxInfo(dateStart,dateEnd)

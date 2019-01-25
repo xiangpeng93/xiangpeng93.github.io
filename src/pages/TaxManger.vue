@@ -21,18 +21,20 @@
                             <el-date-picker
                             v-model="taxMonthBegin"
                             type="month"
-                            placeholder="选择开始月份">
+                            placeholder="选择开始月份"
+                            value-format="yyyy-MM">
                         </el-date-picker>
                     </el-form-item>
                     <el-form-item label="结束日期：">
                      <el-date-picker
                      v-model="taxMonthEnd"
                      type="month"
-                     placeholder="选择结束月份">
+                     placeholder="选择结束月份"
+                     value-format="yyyy-MM">
                  </el-date-picker>
              </el-form-item>
              <el-form-item >
-                <el-button type="primary" >查找所得税记录</el-button>
+                <el-button type="primary" @click="getTaxDataByMonths">查找所得税记录</el-button>
             </el-form-item>
             <!-- <el-form-item >
                 <el-button type="primary" >导出所得税记录</el-button>
@@ -130,8 +132,8 @@
         },
         methods: {
             getTaxData() {
-               this.loading = true
-               this.$http.jsonp(this.host + "/getTaxByMonth", {
+             this.loading = true
+             this.$http.jsonp(this.host + "/getTaxByMonth", {
                 params: {
                     "name": this.userName,
                     "session": this.userSession,
@@ -143,6 +145,24 @@
                 this.SalarydData = res.data;
             }, function(res) {
             	this.loading = false
+                console.warn(res);
+            })
+        },
+        getTaxDataByMonths() {
+             this.loading = true
+             this.$http.jsonp(this.host + "/getTaxByMonths", {
+                params: {
+                    "name": this.userName,
+                    "session": this.userSession,
+                    "dateStart":this.taxMonthBegin,
+                    "dateEnd":this.taxMonthEnd,
+                }
+            }).then(function(res) {
+                this.loading = false
+                console.log(res);
+                this.SalarydData = res.data;
+            }, function(res) {
+                this.loading = false
                 console.warn(res);
             })
         },

@@ -144,6 +144,7 @@ class ProcessHandler(BaseHTTPRequestHandler):
         ## 更新版本
         elif urlResult.path == "/updateVersion":
             os.system("git pull")
+            os.system("\cp chwy3.db ../chwy3.db")
             retDict = {};
             retDict["result"] = "OK";
             data = json.dumps(retDict,ensure_ascii=False)
@@ -248,6 +249,13 @@ class ProcessHandler(BaseHTTPRequestHandler):
         ## 获取税金信息
         elif urlResult.path == "/getTaxByMonth":
             data = json.dumps(operateTax.GetTaxData(dictParam["month"][0].decode('utf-8')),
+                              ensure_ascii=False)
+            content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
+            self.wfile.write(content)
+        ## 通过月份区间获取税金信息
+        elif urlResult.path == "/getTaxByMonths":
+            data = json.dumps(operateTax.GetTaxDataByMonths(dictParam["dateStart"][0].decode('utf-8'),
+                                                            dictParam["dateEnd"][0].decode('utf-8')),
                               ensure_ascii=False)
             content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
             self.wfile.write(content)

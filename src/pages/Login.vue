@@ -16,7 +16,7 @@
                                     <el-input v-model="userInfos.name"></el-input>
                                 </el-form-item>
                                 <el-form-item label="用户密码：">
-                                    <el-input type="password" v-model="userInfos.password"></el-input>
+                                    <el-input type="password" v-model="userInfos.password" @keyup.enter.native="onSubmit"></el-input>
                                 </el-form-item>
                                 <el-form-item align="right">
                                     <el-button type="primary" align="center" style="width: 100px" @click="onSubmit"> 登陆 </el-button>
