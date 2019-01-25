@@ -12,7 +12,7 @@
 				<div style="height:75vh;overflow-y:auto; ">
 					<el-table :data="tableData" style="width: 100%" >
 						<el-table-column label="序号" width="auto" type="index"/>
-						<el-table-column prop="companyName" label="公司" width="auto">
+						<el-table-column prop="projName" label="项目" width="auto">
 						</el-table-column>
 						<el-table-column prop="department" label="部门" width="auto">
 						</el-table-column>
