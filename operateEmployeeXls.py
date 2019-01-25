@@ -49,7 +49,7 @@ def AddEmployeesInfoByFileName(fileName):
                 for row in range(g_nStartRow,nRows):
                     rowValue = sheet.row_values(row)
                     rowValue = rowValue[g_nStartCol:40+g_nStartCol]
-                    print rowValue[5]
+                    print rowValue[4]
                     rowValue[5] = _transValueToDate(rowValue[5])
                     rowValue[15] = _transValueToDate(rowValue[15])
                     rowValue[34] = _transValueToDate(rowValue[34])
@@ -60,7 +60,7 @@ def AddEmployeesInfoByFileName(fileName):
                         rowValue[i] = _transFloatToInt(rowValue[i])
                     rowTuple = rowValue
 
-                    print len(rowTuple)
+                    #print len(rowTuple)
                     intsertSql = "INSERT INTO Employees(companyName,projName,department, job, name,\
                     enterTime, salaryBegin, salaryStart, salaryChange, salaryCurrent, phoneNum, \
                     nation, marry, education, demobilized, bornTime, sex, age, zodiac, \
