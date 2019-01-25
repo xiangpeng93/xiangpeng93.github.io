@@ -144,7 +144,7 @@ class ProcessHandler(BaseHTTPRequestHandler):
         ## 更新版本
         elif urlResult.path == "/updateVersion":
             os.system("git pull")
-            os.system("\cp chwy3.db ../chwy3.db")
+            ##os.system("\cp chwy3.db ../chwy3.db")
             retDict = {};
             retDict["result"] = "OK";
             data = json.dumps(retDict,ensure_ascii=False)
