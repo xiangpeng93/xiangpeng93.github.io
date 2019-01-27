@@ -241,6 +241,7 @@ def ProcessTaxXLS(date,fileName):
                                         currentTax = currentNeedTaxNumber * 0.35
                                     elif yearTaxNumber > 960000:
                                        currentTax = currentNeedTaxNumber * 0.45
+                                    currentTax = round(currentTax,2)
                                     yearTax = float(info["yearTax"])
                                     yearTax =  yearTax + currentTax
                                     print u"当月税金",currentTax,u"当年税金",yearTax,u"年度累计应纳税总额",yearTaxNumber
@@ -267,6 +268,7 @@ def ProcessTaxXLS(date,fileName):
                                 currentTax = currentNeedTaxNumber * 0.35
                             elif yearTaxNumber > 960000:
                                currentTax = currentNeedTaxNumber * 0.45
+                            currentTax = round(currentTax,2)
                             yearTax =  yearTax + currentTax
                             print u"当月税金",currentTax,u"当年税金",yearTax,u"年度累计应纳税总额",yearTaxNumber
                             pass
