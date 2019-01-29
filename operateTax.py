@@ -331,7 +331,10 @@ def GetTaxData(date):
     global currentTaxInfo
     print u"获取所得税信息信息",date
     resultDict = _getMonthTaxInfo(date)
-    currentTaxInfo = createFileIfNotExit("taxInfos/"+date+".xls",resultDict)
+    try:
+        currentTaxInfo = createFileIfNotExit("taxInfos/"+date+".xls",resultDict)
+    except Exception,error:
+        currentTaxInfo = error
     return resultDict
 
 def GetTaxFile():
@@ -343,7 +346,10 @@ def GetTaxDataByMonths(dateStart,dateEnd):
     global currentTaxInfo
     print u"根据月份获取所得税信息信息",dateStart,dateEnd
     resultDict = _getMonthsTaxInfo(dateStart,dateEnd)
-    currentTaxInfo = createFileIfNotExit("taxInfos/" + dateStart+ " " + dateEnd + ".xls",resultDict)
+    try:
+        currentTaxInfo = createFileIfNotExit("taxInfos/" + dateStart+ " " + dateEnd + ".xls",resultDict)
+    except Exception,error:
+        currentTaxInfo = error
     return resultDict
 
 ##print GetTaxData("2019-02")

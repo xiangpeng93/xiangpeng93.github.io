@@ -144,6 +144,7 @@ class ProcessHandler(BaseHTTPRequestHandler):
         ## 更新版本
         elif urlResult.path == "/updateVersion":
             os.system("git pull")
+            os.system("pip install xlwt")
             ##os.system("\cp chwy3.db ../chwy3.db")
             retDict = {};
             retDict["result"] = "OK";
