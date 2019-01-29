@@ -36,9 +36,9 @@
              <el-form-item >
                 <el-button type="primary" @click="getTaxDataByMonths">查找所得税记录</el-button>
             </el-form-item>
-            <!-- <el-form-item >
-                <el-button type="primary" >导出所得税记录</el-button>
-            </el-form-item> -->
+            <el-form-item >
+                <el-button type="primary" @click="getTaxFile">导出所得税记录</el-button>
+            </el-form-item>
         </el-form>
     </el-header>
     <el-main style="height: 80vh">
@@ -154,46 +154,63 @@
             })
         },
         getTaxDataByMonths() {
-             this.loading = true
-             this.$http.jsonp(this.host + "/getTaxByMonths", {
-                params: {
-                    "name": this.userName,
-                    "session": this.userSession,
-                    "dateStart":this.taxMonthBegin,
-                    "dateEnd":this.taxMonthEnd,
-                }
-            }).then(function(res) {
-                this.loading = false
-                console.log(res);
-                this.SalarydData = res.data;
-            }, function(res) {
-                this.loading = false
-                console.warn(res);
-            })
-        },
-        updateUrl(file){
-            console.log(this.uploadUrl)
-            if (this.taxMonth == "") {
-                this.$message({
-                    message: '未选择月份，请选择月份后重新上传',
-                    type: 'error'
-                });
-                return false
+         this.loading = true
+         this.$http.jsonp(this.host + "/getTaxByMonths", {
+            params: {
+                "name": this.userName,
+                "session": this.userSession,
+                "dateStart":this.taxMonthBegin,
+                "dateEnd":this.taxMonthEnd,
             }
-            return true
+        }).then(function(res) {
+            this.loading = false
+            console.log(res);
+            this.SalarydData = res.data;
+        }, function(res) {
+            this.loading = false
+            console.warn(res);
+        })
+    },
+    updateUrl(file){
+        console.log(this.uploadUrl)
+        if (this.taxMonth == "") {
+            this.$message({
+                message: '未选择月份，请选择月份后重新上传',
+                type: 'error'
+            });
+            return false
         }
-        ,getCookie(c_name) {
-            if (document.cookie.length > 0) {
-                var c_start = document.cookie.indexOf(c_name + "=")
-                if (c_start != -1) {
-                    c_start = c_start + c_name.length + 1
-                    var c_end = document.cookie.indexOf(";", c_start)
-                    if (c_end == -1) c_end = document.cookie.length
-                        return unescape(document.cookie.substring(c_start, c_end))
-                }
-            }
-            return ""
-        }
+        return true
     }
+    ,
+    getTaxFile(){
+        this.$http.jsonp(this.host + "/getTaxFile", {
+            params: {
+                "name": this.userName,
+                "session": this.userSession
+            }
+        }).then(function(res) {
+            var filePath = res.data["result"]
+            console.log(filePath)
+            if (filePath != "") {
+               window.location= "/" + filePath
+           }
+       }, function(res) {
+        console.warn(res);
+    })
+    }
+    ,getCookie(c_name) {
+        if (document.cookie.length > 0) {
+            var c_start = document.cookie.indexOf(c_name + "=")
+            if (c_start != -1) {
+                c_start = c_start + c_name.length + 1
+                var c_end = document.cookie.indexOf(";", c_start)
+                if (c_end == -1) c_end = document.cookie.length
+                    return unescape(document.cookie.substring(c_start, c_end))
+            }
+        }
+        return ""
+    }
+}
 }
 </script>

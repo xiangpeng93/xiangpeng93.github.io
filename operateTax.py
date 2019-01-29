@@ -6,6 +6,7 @@ import operateSqlite
 import employeesManger
 from datetime import datetime
 
+currentTaxInfo = ""
 g_nStartRow = 1
 g_nStartCol = 0
 def open_excel(file):
@@ -36,6 +37,46 @@ def _transFloatToInt(value):
         pass
     return value
 
+def createFileIfNotExit(fileName,listValue):
+    if(os.path.exists(fileName) == True):
+        pass
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet('Sheet1',cell_overwrite_ok=True)
+    ws.write(0 , 0, u"序号")
+    ws.write(0 , 1, u"姓名")
+    ws.write(0 , 2, u"项目")
+    ws.write(0 , 3, u"部门")
+    ws.write(0 , 4, u"职务")
+    ws.write(0 , 5, u"当月收入")
+    ws.write(0 , 6, u"通讯费")
+    ws.write(0 , 7, u"设保缴纳")
+    ws.write(0 , 8, u"专项扣除")
+    ws.write(0 , 9, u"当月应缴纳所得额")
+    ws.write(0 , 10, u"累计应缴纳所得额")
+    ws.write(0 , 11, u"当月税金")
+    ws.write(0 , 12, u"日期")
+    x = 1;
+    y = 0
+    number = 1;
+    for value in listValue:
+        ws.write(x , y, number)
+        ws.write(x , y + 1, value["name"])
+        ws.write(x , y + 2, value["comp"])
+        ws.write(x , y + 3, value["department"])
+        ws.write(x , y + 4, value["job"])
+        ws.write(x , y + 5, value["currentSalary"])
+        ws.write(x , y + 6, value["comunicationCost"])
+        ws.write(x , y + 7, value["socialSecurity"])
+        ws.write(x , y + 8, value["customCutout"])
+        ws.write(x , y + 9, value["currentNeedTaxNumber"])
+        ws.write(x , y + 10, value["yearTax"])
+        ws.write(x , y + 11, value["currentTax"])
+        ws.write(x , y + 12, value["date"])
+        x = x + 1
+        number = number + 1
+    wb.save(fileName)
+    return fileName
+    
 ## 获取上个月的个税缴纳信息
 def _getLastMonthTaxInfo(date):
     taxResults = []
@@ -287,10 +328,23 @@ def ProcessTaxXLS(date,fileName):
 
 ##ProcessTaxXLS("2019-02","testTax.xlsx")
 def GetTaxData(date):
+    global currentTaxInfo
     print u"获取所得税信息信息",date
-    return _getMonthTaxInfo(date)
-##print GetTaxData("2019-02")
+    resultDict = _getMonthTaxInfo(date)
+    currentTaxInfo = createFileIfNotExit("taxInfos/"+date+".xls",resultDict)
+    return resultDict
+
+def GetTaxFile():
+    result = {}
+    result["result"] = currentTaxInfo
+    return result;
 
 def GetTaxDataByMonths(dateStart,dateEnd):
+    global currentTaxInfo
     print u"根据月份获取所得税信息信息",dateStart,dateEnd
-    return _getMonthsTaxInfo(dateStart,dateEnd)
+    resultDict = _getMonthsTaxInfo(dateStart,dateEnd)
+    currentTaxInfo = createFileIfNotExit("taxInfos/" + dateStart+ " " + dateEnd + ".xls",resultDict)
+    return resultDict
+
+##print GetTaxData("2019-02")
+##print GetTaxFile()

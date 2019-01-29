@@ -259,6 +259,12 @@ class ProcessHandler(BaseHTTPRequestHandler):
                               ensure_ascii=False)
             content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
             self.wfile.write(content)
+        ## 获取文件名称
+        elif urlResult.path == "/getTaxFile":
+            data = json.dumps(operateTax.GetTaxFile(),
+                              ensure_ascii=False)
+            content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
+            self.wfile.write(content)
             
     def do_POST(self):
         print u"新POST请求进入','路径为：",self.path
