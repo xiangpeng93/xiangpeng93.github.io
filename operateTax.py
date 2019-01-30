@@ -206,7 +206,7 @@ def ProcessTaxXLS(date,fileName):
                         department = ""
                         job = ""
                         for info in employeesInfos:
-                            if info["name"] == name:
+                            if name.find(info["name"]) != -1:
                                 comp = info["projName"]
                                 department = info["department"]
                                 job = info["job"]
@@ -281,8 +281,8 @@ def ProcessTaxXLS(date,fileName):
                                     elif yearTaxNumber <= 960000:
                                         currentTax = currentNeedTaxNumber * 0.35
                                     elif yearTaxNumber > 960000:
-                                       currentTax = currentNeedTaxNumber * 0.45
-                                    currentTax = round(currentTax,2)
+                                        currentTax = currentNeedTaxNumber * 0.45
+                                    currentTax = float('%.2f' % currentTax)
                                     yearTax = float(info["yearTax"])
                                     yearTax =  yearTax + currentTax
                                     print u"当月税金",currentTax,u"当年税金",yearTax,u"年度累计应纳税总额",yearTaxNumber
@@ -298,18 +298,19 @@ def ProcessTaxXLS(date,fileName):
                             if yearTaxNumber <= 36000:
                                 currentTax = currentNeedTaxNumber * 0.03
                             elif yearTaxNumber <= 144000:
-                                currentTax = currentNeedTaxNumber * 0.1
+                                currentTax = (currentNeedTaxNumber-2520) * 0.1
                             elif yearTaxNumber <= 300000:
-                                currentTax = currentNeedTaxNumber * 0.2
+                                currentTax = (currentNeedTaxNumber-16920) * 0.2
                             elif yearTaxNumber <= 420000:
-                                currentTax = currentNeedTaxNumber * 0.25
+                                currentTax = (currentNeedTaxNumber-31920) * 0.25
                             elif yearTaxNumber <= 660000:
-                                currentTax = currentNeedTaxNumber * 0.3
+                                currentTax = (currentNeedTaxNumber-52920) * 0.3
                             elif yearTaxNumber <= 960000:
-                                currentTax = currentNeedTaxNumber * 0.35
+                                currentTax = (currentNeedTaxNumber-85920) * 0.35
                             elif yearTaxNumber > 960000:
-                               currentTax = currentNeedTaxNumber * 0.45
-                            currentTax = round(currentTax,2)
+                                currentTax = (currentNeedTaxNumber-181920) * 0.45
+                            print currentTax
+                            currentTax = float('%.2f' % currentTax)
                             yearTax =  yearTax + currentTax
                             print u"当月税金",currentTax,u"当年税金",yearTax,u"年度累计应纳税总额",yearTaxNumber
                             pass
