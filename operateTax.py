@@ -178,6 +178,15 @@ def _insertTaxInfo(info):
 ## 测试
 ##print _getLastMonthTaxInfo("2019-05")
 
+def _calcFourOutFiveIn(number):
+    number = number * 1000
+    firstData = number % 10
+    if firstData > 4:
+        number = number + 10
+    number = int(number/10)
+    return float(number/100.0)
+
+
 TaxData = {};
 
 def ProcessTaxXLS(date,fileName):
@@ -282,7 +291,7 @@ def ProcessTaxXLS(date,fileName):
                                         currentTax = currentNeedTaxNumber * 0.35
                                     elif yearTaxNumber > 960000:
                                         currentTax = currentNeedTaxNumber * 0.45
-                                    currentTax = float('%.2f' % currentTax)
+                                    currentTax = _calcFourOutFiveIn(currentTax)
                                     yearTax = float(info["yearTax"])
                                     yearTax =  yearTax + currentTax
                                     print u"当月税金",currentTax,u"当年税金",yearTax,u"年度累计应纳税总额",yearTaxNumber
@@ -310,7 +319,7 @@ def ProcessTaxXLS(date,fileName):
                             elif yearTaxNumber > 960000:
                                 currentTax = (currentNeedTaxNumber-181920) * 0.45
                             print currentTax
-                            currentTax = float('%.2f' % currentTax)
+                            currentTax = _calcFourOutFiveIn(currentTax)
                             yearTax =  yearTax + currentTax
                             print u"当月税金",currentTax,u"当年税金",yearTax,u"年度累计应纳税总额",yearTaxNumber
                             pass
