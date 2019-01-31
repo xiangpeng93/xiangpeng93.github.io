@@ -54,8 +54,9 @@ def createFileIfNotExit(fileName,listValue):
     ws.write(0 , 9, u"当月应缴纳所得额")
     ws.write(0 , 10, u"累计应缴纳所得额")
     ws.write(0 , 11, u"当月税金")
-    ws.write(0 , 12, u"税率")
-    ws.write(0 , 13, u"日期")
+    ws.write(0 , 12, u"累计税金")
+    ws.write(0 , 13, u"税率")
+    ws.write(0 , 14, u"日期")
     x = 1;
     y = 0
     number = 1;
@@ -70,24 +71,25 @@ def createFileIfNotExit(fileName,listValue):
         ws.write(x , y + 7, value["socialSecurity"])
         ws.write(x , y + 8, value["customCutout"])
         ws.write(x , y + 9, value["currentNeedTaxNumber"])
-        ws.write(x , y + 10, value["yearTax"])
+        ws.write(x , y + 10, value["yearTaxNumber"])
         ws.write(x , y + 11, value["currentTax"])
+        ws.write(x , y + 12, value["yearTax"])
         yearTaxNumber = float(value["yearTaxNumber"])
         if yearTaxNumber <= 36000:
-            ws.write(x , y + 12,"3%")
+            ws.write(x , y + 13,"3%")
         elif yearTaxNumber <= 144000:
-            ws.write(x , y + 12,"10%")
+            ws.write(x , y + 13,"10%")
         elif yearTaxNumber <= 300000:
-            ws.write(x , y + 12, "20%")
+            ws.write(x , y + 13, "20%")
         elif yearTaxNumber <= 420000:
-            ws.write(x , y + 12, "25%")
+            ws.write(x , y + 13, "25%")
         elif yearTaxNumber <= 660000:
-            ws.write(x , y + 12, "30%")
+            ws.write(x , y + 13, "30%")
         elif yearTaxNumber <= 960000:
-            ws.write(x , y + 12, "35%")
+            ws.write(x , y + 13, "35%")
         elif yearTaxNumber > 960000:
-            ws.write(x , y + 12,"45%")
-        ws.write(x , y + 13, value["date"])
+            ws.write(x , y + 13,"45%")
+        ws.write(x , y + 14, value["date"])
         x = x + 1
         number = number + 1
     wb.save(fileName)
