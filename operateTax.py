@@ -4,6 +4,8 @@ import xlwt
 import os
 import operateSqlite
 import employeesManger
+import decimal
+from decimal import Decimal
 from datetime import datetime
 
 currentTaxInfo = ""
@@ -228,12 +230,15 @@ def _insertTaxInfo(info):
 
 def _calcFourOutFiveIn(number):
     number = number * 1000
-    firstData = number % 10
+    
+    firstData = int(round(Decimal(number % 10),2))
+    
     if firstData > 4:
         number = number + 10
     number = int(number/10)
     return float(number/100.0)
 
+##print _calcFourOutFiveIn(327.24455)
 
 TaxData = {};
 
