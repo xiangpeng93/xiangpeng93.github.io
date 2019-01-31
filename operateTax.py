@@ -54,7 +54,8 @@ def createFileIfNotExit(fileName,listValue):
     ws.write(0 , 9, u"当月应缴纳所得额")
     ws.write(0 , 10, u"累计应缴纳所得额")
     ws.write(0 , 11, u"当月税金")
-    ws.write(0 , 12, u"日期")
+    ws.write(0 , 12, u"税率")
+    ws.write(0 , 13, u"日期")
     x = 1;
     y = 0
     number = 1;
@@ -71,7 +72,22 @@ def createFileIfNotExit(fileName,listValue):
         ws.write(x , y + 9, value["currentNeedTaxNumber"])
         ws.write(x , y + 10, value["yearTax"])
         ws.write(x , y + 11, value["currentTax"])
-        ws.write(x , y + 12, value["date"])
+        yearTaxNumber = float(value["yearTaxNumber"])
+        if yearTaxNumber <= 36000:
+            ws.write(x , y + 12,"3%")
+        elif yearTaxNumber <= 144000:
+            ws.write(x , y + 12,"10%")
+        elif yearTaxNumber <= 300000:
+            ws.write(x , y + 12, "20%")
+        elif yearTaxNumber <= 420000:
+            ws.write(x , y + 12, = "25%")
+        elif yearTaxNumber <= 660000:
+            ws.write(x , y + 12, "30%")
+        elif yearTaxNumber <= 960000:
+            ws.write(x , y + 12, "35%")
+        elif yearTaxNumber > 960000:
+            ws.write(x , y + 12,"45%")
+        ws.write(x , y + 13, value["date"])
         x = x + 1
         number = number + 1
     wb.save(fileName)
@@ -113,6 +129,21 @@ def _getMonthTaxInfo(date):
             result["date"] = info[11]
             result["comunicationCost"] = info[12]
             result["socialSecurity"] = info[13]
+            yearTaxNumber = float(result["yearTaxNumber"])
+            if yearTaxNumber <= 36000:
+                result["rate"] = "3%"
+            elif yearTaxNumber <= 144000:
+                result["rate"] = "10%"
+            elif yearTaxNumber <= 300000:
+                result["rate"] = "20%"
+            elif yearTaxNumber <= 420000:
+                result["rate"] = "25%"
+            elif yearTaxNumber <= 660000:
+                result["rate"] = "30%"
+            elif yearTaxNumber <= 960000:
+                result["rate"] = "35%"
+            elif yearTaxNumber > 960000:
+                result["rate"] = "45%"
             taxResults.append(result)
     except Exception,error:
         print "error ",error
@@ -142,6 +173,21 @@ def _getMonthsTaxInfo(dateStart,dateEnd):
             result["date"] = info[11]
             result["comunicationCost"] = info[12]
             result["socialSecurity"] = info[13]
+            yearTaxNumber = float(result["yearTaxNumber"])
+            if yearTaxNumber <= 36000:
+                result["rate"] = "3%"
+            elif yearTaxNumber <= 144000:
+                result["rate"] = "10%"
+            elif yearTaxNumber <= 300000:
+                result["rate"] = "20%"
+            elif yearTaxNumber <= 420000:
+                result["rate"] = "25%"
+            elif yearTaxNumber <= 660000:
+                result["rate"] = "30%"
+            elif yearTaxNumber <= 960000:
+                result["rate"] = "35%"
+            elif yearTaxNumber > 960000:
+                result["rate"] = "45%"
             taxResults.append(result)
     except Exception,error:
         print "error ",error
@@ -278,19 +324,19 @@ def ProcessTaxXLS(date,fileName):
                                     yearTaxNumber = yearTaxNumber + currentNeedTaxNumber
                                     
                                     if yearTaxNumber <= 36000:
-                                        currentTax = currentNeedTaxNumber * 0.03
+                                        currentTax = yearTaxNumber * 0.03 - float(info["yearTax"])
                                     elif yearTaxNumber <= 144000:
-                                        currentTax = currentNeedTaxNumber * 0.1
+                                        currentTax = yearTaxNumber * 0.1 - float(info["yearTax"]) -2520
                                     elif yearTaxNumber <= 300000:
-                                        currentTax = currentNeedTaxNumber * 0.2
+                                        currentTax = yearTaxNumber * 0.2 - float(info["yearTax"]) -16920
                                     elif yearTaxNumber <= 420000:
-                                        currentTax = currentNeedTaxNumber * 0.25
+                                        currentTax = yearTaxNumber * 0.25 - float(info["yearTax"]) -31920
                                     elif yearTaxNumber <= 660000:
-                                        currentTax = currentNeedTaxNumber * 0.3
+                                        currentTax = yearTaxNumber * 0.3 - float(info["yearTax"]) -52920
                                     elif yearTaxNumber <= 960000:
-                                        currentTax = currentNeedTaxNumber * 0.35
+                                        currentTax = yearTaxNumber * 0.35 - float(info["yearTax"]) -85920
                                     elif yearTaxNumber > 960000:
-                                        currentTax = currentNeedTaxNumber * 0.45
+                                        currentTax = yearTaxNumber * 0.45 - float(info["yearTax"]) -181920
                                     currentTax = _calcFourOutFiveIn(currentTax)
                                     yearTax = float(info["yearTax"])
                                     yearTax =  yearTax + currentTax
@@ -307,17 +353,17 @@ def ProcessTaxXLS(date,fileName):
                             if yearTaxNumber <= 36000:
                                 currentTax = currentNeedTaxNumber * 0.03
                             elif yearTaxNumber <= 144000:
-                                currentTax = (currentNeedTaxNumber-2520) * 0.1
+                                currentTax = (currentNeedTaxNumber) * 0.1 -2520
                             elif yearTaxNumber <= 300000:
-                                currentTax = (currentNeedTaxNumber-16920) * 0.2
+                                currentTax = (currentNeedTaxNumber) * 0.2 -16920
                             elif yearTaxNumber <= 420000:
-                                currentTax = (currentNeedTaxNumber-31920) * 0.25
+                                currentTax = (currentNeedTaxNumber) * 0.25 -31920
                             elif yearTaxNumber <= 660000:
-                                currentTax = (currentNeedTaxNumber-52920) * 0.3
+                                currentTax = (currentNeedTaxNumber) * 0.3 -52920
                             elif yearTaxNumber <= 960000:
-                                currentTax = (currentNeedTaxNumber-85920) * 0.35
+                                currentTax = (currentNeedTaxNumber) * 0.35 -85920
                             elif yearTaxNumber > 960000:
-                                currentTax = (currentNeedTaxNumber-181920) * 0.45
+                                currentTax = (currentNeedTaxNumber) * 0.45 -181920
                             print currentTax
                             currentTax = _calcFourOutFiveIn(currentTax)
                             yearTax =  yearTax + currentTax

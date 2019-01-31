@@ -69,6 +69,8 @@
             </el-table-column>
             <el-table-column prop="yearTax" label="累计税金">
             </el-table-column>
+            <el-table-column prop="rate" label="税率">
+            </el-table-column>
             <el-table-column prop="date" label="时间" >
             </el-table-column>
         </el-table>
