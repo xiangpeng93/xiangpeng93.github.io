@@ -80,7 +80,7 @@ def createFileIfNotExit(fileName,listValue):
         elif yearTaxNumber <= 300000:
             ws.write(x , y + 12, "20%")
         elif yearTaxNumber <= 420000:
-            ws.write(x , y + 12, = "25%")
+            ws.write(x , y + 12, "25%")
         elif yearTaxNumber <= 660000:
             ws.write(x , y + 12, "30%")
         elif yearTaxNumber <= 960000:
