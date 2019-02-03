@@ -116,7 +116,7 @@ def _getMonthTaxInfo(date,userName):
     taxResults = [] 
     try:
         operateSqlite.ConnectSqlite()
-        operateSqlite.g_dict["cursor"].execute( str("select * from TaxInfos where date = '%s'"%(date)))
+        operateSqlite.g_dict["cursor"].execute( str("select * from TaxInfos where userName='%s' and date = '%s'"%(userName,date)))
         taxInfos = operateSqlite.g_dict["cursor"].fetchall();
         for info in taxInfos:
             result = {}
@@ -229,6 +229,7 @@ def _insertTaxInfo(info):
 ##print _getLastMonthTaxInfo("2019-05")
 
 def _calcFourOutFiveIn(number):
+    print u"原始数据",number
     number = number * 1000
     
     firstData = int(round(Decimal(number % 10),2))
@@ -236,6 +237,7 @@ def _calcFourOutFiveIn(number):
     if firstData > 4:
         number = number + 10
     number = int(number/10)
+    print u"转化后数据",float(number/100.0)
     return float(number/100.0)
 
 ##print _calcFourOutFiveIn(327.24455)
