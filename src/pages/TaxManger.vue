@@ -113,7 +113,7 @@
         },
         watch:{
             taxMonth(){
-                this.uploadUrl = this.baseUrl + "?taxMonth=" + this.taxMonth 
+                this.uploadUrl = this.baseUrl + "?taxMonth=" + this.taxMonth + "&name="+this.userName
             }
         },
         data() {

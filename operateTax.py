@@ -98,7 +98,7 @@ def createFileIfNotExit(fileName,listValue):
     return fileName
     
 ## 获取上个月的个税缴纳信息
-def _getLastMonthTaxInfo(date):
+def _getLastMonthTaxInfo(date,userName):
     taxResults = []
     if date.find("-01") != -1:
         print "first month don't have last month"
@@ -110,9 +110,9 @@ def _getLastMonthTaxInfo(date):
         lastDate = lastDate + "0"+str(currentMonth)
     else:
         lastDate = lastDate + str(currentMonth)
-    return _getMonthTaxInfo(lastDate)
+    return _getMonthTaxInfo(lastDate,userName)
 
-def _getMonthTaxInfo(date):
+def _getMonthTaxInfo(date,userName):
     taxResults = [] 
     try:
         operateSqlite.ConnectSqlite()
@@ -156,11 +156,11 @@ def _getMonthTaxInfo(date):
         operateSqlite.CloseSqlite()
     return taxResults
 
-def _getMonthsTaxInfo(dateStart,dateEnd):
+def _getMonthsTaxInfo(dateStart,dateEnd,userName):
     taxResults = [] 
     try:
         operateSqlite.ConnectSqlite()
-        operateSqlite.g_dict["cursor"].execute( str("select * from TaxInfos where date >= '%s' and date <='%s' order by date"%(dateStart,dateEnd)))
+        operateSqlite.g_dict["cursor"].execute( str("select * from TaxInfos where userName='%s' and date >= '%s' and date <='%s' order by date"%(userName,dateStart,dateEnd)))
         taxInfos = operateSqlite.g_dict["cursor"].fetchall();
         for info in taxInfos:
             result = {}
@@ -201,10 +201,10 @@ def _getMonthsTaxInfo(dateStart,dateEnd):
     return taxResults
 
 ## 根据月份删除个税信息
-def _deleteTaxInfoByDate(date):
+def _deleteTaxInfoByDate(date,userName):
     try:
         operateSqlite.ConnectSqlite()
-        operateSqlite.g_dict["cursor"].execute( str("delete from TaxInfos where date = '%s'"%(date)))
+        operateSqlite.g_dict["cursor"].execute( str("delete from TaxInfos where date = '%s' and userName='%s'"%(date,userName)))
     except Exception,error:
         print "error ",error
         pass
@@ -217,8 +217,8 @@ def _insertTaxInfo(info):
         operateSqlite.g_dict["cursor"].execute("insert into TaxInfos(name, comp,department,job, \
                                                 currentSalary,currentNeedTaxNumber,\
                                                yearTaxNumber,customCutout, currentTax,yearTax, date,\
-                                               comunicationCost,socialSecurity) \
-                                               VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",info)
+                                               comunicationCost,socialSecurity,userName) \
+                                               VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",info)
     except Exception,error:
         print "error ",error
         pass
@@ -242,16 +242,16 @@ def _calcFourOutFiveIn(number):
 
 TaxData = {};
 
-def ProcessTaxXLS(date,fileName):
+def ProcessTaxXLS(date,fileName,userName):
     print u"处理个税信息"
-    lastTaxInfos = _getLastMonthTaxInfo(date)
+    lastTaxInfos = _getLastMonthTaxInfo(date,userName)
     
     excelData = open_excel(fileName)
     for sheet in excelData.sheets():
         if sheet.name.find(u"个税")==-1:
             continue
 ##        print  sheet.name
-        _deleteTaxInfoByDate(date)
+        _deleteTaxInfoByDate(date,userName)
         employeesInfos = employeesManger.GetSimpleEmployeeInfo()
         try:
             nRows = sheet.nrows
@@ -323,11 +323,12 @@ def ProcessTaxXLS(date,fileName):
                         if len(lastTaxInfos) > 0:
                             for info in lastTaxInfos:
                                 if info["name"] == name:
-                                    if salary > 0:
+                                    yearTaxNumber = float(info["yearTaxNumber"])
+                                    
+                                    if yearTaxNumber > 0:
                                         currentNeedTaxNumber = salary
                                     else:
                                         currentNeedTaxNumber = 0
-                                    yearTaxNumber = float(info["yearTaxNumber"])
                                     yearTaxNumber = yearTaxNumber + currentNeedTaxNumber
                                     
                                     if yearTaxNumber <= 36000:
@@ -377,7 +378,8 @@ def ProcessTaxXLS(date,fileName):
                             print u"当月税金",currentTax,u"当年税金",yearTax,u"年度累计应纳税总额",yearTaxNumber
                             pass
                         _insertTaxInfo((name,comp,department,job,currentSalary,currentNeedTaxNumber,
-                                        yearTaxNumber,customCutout,currentTax,yearTax,date,cut1,cut2))
+                                        yearTaxNumber,customCutout,currentTax,yearTax,date,cut1,cut2,
+                                        userName))
                         print name,salary
                     except Exception,error:
                         print "parse row error",error
@@ -390,10 +392,10 @@ def ProcessTaxXLS(date,fileName):
             pass
 
 ##ProcessTaxXLS("2019-02","testTax.xlsx")
-def GetTaxData(date):
+def GetTaxData(date,userName):
     global currentTaxInfo
-    print u"获取所得税信息信息",date
-    resultDict = _getMonthTaxInfo(date)
+    print u"获取所得税信息信息",date,userName
+    resultDict = _getMonthTaxInfo(date,userName)
     try:
         currentTaxInfo = createFileIfNotExit("taxInfos/"+date+".xls",resultDict)
     except Exception,error:
@@ -405,10 +407,10 @@ def GetTaxFile():
     result["result"] = currentTaxInfo
     return result;
 
-def GetTaxDataByMonths(dateStart,dateEnd):
+def GetTaxDataByMonths(dateStart,dateEnd,userName):
     global currentTaxInfo
-    print u"根据月份获取所得税信息信息",dateStart,dateEnd
-    resultDict = _getMonthsTaxInfo(dateStart,dateEnd)
+    print u"根据月份获取所得税信息信息",dateStart,dateEnd,userName
+    resultDict = _getMonthsTaxInfo(dateStart,dateEnd,userName)
     try:
         currentTaxInfo = createFileIfNotExit("taxInfos/" + dateStart+ " " + dateEnd + ".xls",resultDict)
     except Exception,error:

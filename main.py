@@ -61,6 +61,11 @@ class ProcessHandler(BaseHTTPRequestHandler):
         except Exception,error:
             print "check user error: ",error
             return;
+        ## 获取用户个人信息
+        if urlResult.path == "/getUserControl":
+            data = json.dumps(GetUserControl(dictParam["name"][0].decode('utf-8'),dictParam["session"][0]))
+            content = '%s(%s)'%(dictParam["callback"][0],data)
+            self.wfile.write(content)
         ## 获取组织
         if urlResult.path == "/getOrgs":
             content = '%s(%s)'%(dictParam["callback"][0],GetOrgInfos())
@@ -249,14 +254,16 @@ class ProcessHandler(BaseHTTPRequestHandler):
             self.wfile.write(content)
         ## 获取税金信息
         elif urlResult.path == "/getTaxByMonth":
-            data = json.dumps(operateTax.GetTaxData(dictParam["month"][0].decode('utf-8')),
+            data = json.dumps(operateTax.GetTaxData(dictParam["month"][0].decode('utf-8'),
+            dictParam["name"][0].decode('utf-8')),
                               ensure_ascii=False)
             content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
             self.wfile.write(content)
         ## 通过月份区间获取税金信息
         elif urlResult.path == "/getTaxByMonths":
             data = json.dumps(operateTax.GetTaxDataByMonths(dictParam["dateStart"][0].decode('utf-8'),
-                                                            dictParam["dateEnd"][0].decode('utf-8')),
+                                                            dictParam["dateEnd"][0].decode('utf-8'),
+                                                            dictParam["name"][0].decode('utf-8')),
                               ensure_ascii=False)
             content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
             self.wfile.write(content)
@@ -358,7 +365,7 @@ class ProcessHandler(BaseHTTPRequestHandler):
                 with open("taxTmp.xls",'wb') as f:
                     f.write(filevalue)
                     f.close()
-                operateTax.ProcessTaxXLS(date,"taxTmp.xls")
+                operateTax.ProcessTaxXLS(date,"taxTmp.xls",dictParam["name"][0].decode('utf-8'))
 
         return
     

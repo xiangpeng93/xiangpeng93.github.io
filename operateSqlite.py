@@ -19,7 +19,7 @@ def ConnectSqlite():
     if g_dict.has_key("conn"):
         print "connect ready."
         return
-    conn = sqlite3.connect(sqlitePath.decode("gbk").encode("utf-8"))
+    conn = sqlite3.connect(sqlitePath.decode("utf-8").encode("utf-8"))
     cursor = conn.cursor()
     g_dict["conn"] = conn
     g_dict["cursor"] = cursor

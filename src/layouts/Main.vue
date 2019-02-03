@@ -5,22 +5,23 @@
             background-color="#545c64"
             text-color="#fff"
             active-text-color="#ffd04b">
-            <el-menu-item index="/Home" align="center" style="width: 200px"><i class="el-icon-document"></i><b>彭梦瑶的人事系统
+            <el-menu-item index="/Home" align="center" style="width: 200px"><i class="el-icon-document" ></i><b>彭梦瑶的人事系统
             </b></el-menu-item>
-            <el-menu-item index="/EmployeeInfos">组织人员信息</el-menu-item>
-            <el-menu-item index="/QueryEmployeeInfo">雇员信息查询</el-menu-item>
-            <el-menu-item index="/WorkOverTimeAnalyze">加班统计</el-menu-item>
-            <el-menu-item index="/RewardAnalyze">奖励统计</el-menu-item>
-            <el-menu-item index="/ClothingManger">服装管理</el-menu-item>
-            <el-menu-item index="/TaxManger">个人所得税</el-menu-item>
+            <el-menu-item index="/EmployeeInfos" :class="displayOrganization">组织人员信息</el-menu-item>
+            <el-menu-item index="/QueryEmployeeInfo" :class="displayEmployee">雇员信息查询</el-menu-item>
+            <el-menu-item index="/WorkOverTimeAnalyze" :class="displayWorkOver">加班统计</el-menu-item>
+            <el-menu-item index="/RewardAnalyze" :class="displayReward">奖励统计</el-menu-item>
+            <el-menu-item index="/ClothingManger" :class="displayClothing">服装管理</el-menu-item>
+            <el-menu-item index="/TaxManger" :class="displayTax">个人所得税</el-menu-item>
             <!--  <el-menu-item index="/About">其他信息</el-menu-item> -->
             <el-submenu index="#" style="float:right;">
                <template slot="title"><i class="el-icon-service"></i>{{userName}}</template>
-               <el-menu-item index="/ConfigInfo">配置信息</el-menu-item>
-               <el-menu-item index="#changePasswd">修改密码</el-menu-item>
+               <div :class="displayConfig">
+                <el-menu-item index="/ConfigInfo">配置信息</el-menu-item>
+                <el-menu-item index="#updateVersion">更新版本</el-menu-item>
+               </div>
+               <el-menu-item index="#changePasswd">修改密码</el-menu-item>               
                <el-menu-item index='/'>退出登录</el-menu-item>
-               <el-menu-item index="#updateVersion">更新版本</el-menu-item>
-
            </el-submenu>
        </el-menu>
 
@@ -42,6 +43,14 @@
 <slot></slot>
 </div>
 </template>
+<style type="text/css">
+    .displayHidden{
+        display: none;
+    }
+    .displayView{
+        display: none;
+    }
+</style>
 <script>
 	import linkUrl from "../link.js"
 	export default {
@@ -53,12 +62,19 @@
 				dialogFormVisible: false,
 				formLabelWidth: '100px',
 				host:linkUrl["host"] ,
+                displayOrganization:'displayHidden',
+                displayConfig:'displayHidden',
+                displayTax:'displayHidden',
+                displayEmployee:'displayHidden',
+                displayReward:'displayHidden',
+                displayClothing:'displayHidden',
+                displayWorkOver:'displayHidden'
 			};
 		},
 		beforeMount: function() {
 			this.userName = this.getCookie('name')
 			this.userSession = this.getCookie('session')
-			this.getUserInfo() 
+			this.getUserControl() 
 		},
 		methods: {
 			handleSelect(key, keyPath) {
@@ -73,7 +89,7 @@
 				{
 					this.updateVersion()
 				}
-                this.getUserInfo() 
+                this.getUserControl() 
             },
             updateVersion(){
             //发送get请求
@@ -99,14 +115,27 @@
             	console.warn(res);
             })
         },
-        getUserInfo() {
-            this.$http.jsonp(this.host + "/getSimpleEmployeeInfo", {
+        getUserControl() {
+            this.$http.jsonp(this.host + "/getUserControl", {
                 params: {
                     "name": this.userName,
                     "session": this.userSession
                 }
             }).then(function(res) {
-                console.log(res);
+                console.log(res.data);
+                if (res.data["userControl"] == "all") {
+                    this.displayOrganization=''
+                    this.displayConfig=''
+                    this.displayTax=''
+                    this.displayEmployee=''
+                    this.displayReward=''
+                    this.displayClothing=''
+                    this.displayWorkOver=''
+                };
+                if (res.data["userControl"].indexOf("tax") >=0 ) {
+                    this.displayTax = ''
+                };
+                
             }, function(res) {
             	this.logout()
                 console.warn(res);
