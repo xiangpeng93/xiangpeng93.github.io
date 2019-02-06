@@ -52,24 +52,24 @@ def ProcessWorkOvertimeXLS(fileName):
                     ## 增加容错率
                     try:
                         rowValue = sheet.row_values(row)   
-                        rowValue[4] = _transValueToDate(rowValue[4])
-                        rowValue[5] = _transValueToDate(rowValue[5])
+                        rowValue[6] = _transValueToDate(rowValue[6])
+                        rowValue[7] = _transValueToDate(rowValue[7])
                         for i in range(0,len(rowValue)):
                             rowValue[i] = _transFloatToInt(rowValue[i])
-                        if rowValue[8] == "on":
-                            rowValue[8] = u"调休"
+                        if rowValue[10] == "on":
+                            rowValue[10] = u"调休"
                         else :
-                            rowValue[8] = u"非调休"
+                            rowValue[10] = u"非调休"
                             
-                        tData = (rowValue[0],rowValue[1],rowValue[2],rowValue[3],rowValue[4],
-                                 rowValue[5],rowValue[6],rowValue[7],rowValue[8])
+                        tData = (rowValue[0],rowValue[1],rowValue[2],rowValue[3],rowValue[4],rowValue[5],rowValue[6],
+                                 rowValue[7],rowValue[8],rowValue[9],rowValue[10])
                         
                         if OvertimeWorkData.has_key(rowValue[0]):
                             pass
                         else:
-                            OvertimeWorkData[rowValue[0]] = []
-                        OvertimeWorkData[rowValue[0]].append(tData)
-                    except:
+                            OvertimeWorkData[rowValue[2]] = []
+                        OvertimeWorkData[rowValue[2]].append(tData)
+                    except Exception,error:
                         print "parse ProcessWorkOvertimeXLS row value error",error
                         pass
                 print nRows,nCols
@@ -96,25 +96,28 @@ def GetWorkoverData():
             realHours = 0
             for info in OvertimeWorkData[item]:
                 tDataDict = {}
-                days = days + int(info[6])
-                hours = hours + int(info[7])
-                tDataDict["name"] = info[0]
-                tDataDict["comp"] = info[1]
-                tDataDict["proj"] = info[2]
-                tDataDict["job"] = info[3]
-                tDataDict["startTime"] = info[4]
-                tDataDict["endTime"] = info[5]
-                tDataDict["days"] = info[6]
-                tDataDict["hours"] = info[7]
-		tDataDict["leaves"] = info[8]
+                days = days + int(info[8])
+                hours = hours + int(info[9])
+                tDataDict["squene"] = info[0]
+                tDataDict["status"] = info[1]
+
+                tDataDict["name"] = info[2]
+                tDataDict["comp"] = info[3]
+                tDataDict["proj"] = info[4]
+                tDataDict["job"] = info[5]
+                tDataDict["startTime"] = info[6]
+                tDataDict["endTime"] = info[7]
+                tDataDict["days"] = info[8]
+                tDataDict["hours"] = info[9]
+                tDataDict["leaves"] = info[10]
                 if tDataDict["leaves"] == u"非调休":
-                    realDays = realDays + int(info[6])
-                    realHours = realHours + int(info[7])
+                    realDays = realDays + int(info[8])
+                    realHours = realHours + int(info[9])
                 DstInfo.append(tDataDict)
             tDataAll = {}
             tDataAll["name"] = item + u" 加班统计:"
-            tDataAll["comp"] = OvertimeWorkData[item][0][1]
-            tDataAll["proj"] = OvertimeWorkData[item][0][2]
+            tDataAll["comp"] = OvertimeWorkData[item][0][3]
+            tDataAll["proj"] = OvertimeWorkData[item][0][4]
             tDataAll["job"] = u"总天数:" + str(days)
             tDataAll["startTime"] = u"总小时数:"+ str(hours)
             tDataAll["endTime"] = u"实际天数:"+ str(realDays)

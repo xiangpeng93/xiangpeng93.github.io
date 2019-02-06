@@ -20,6 +20,10 @@
                 </el-header>
                 <el-main style="height:85vh">
                     <el-table :data="OvertimeData.filter(data => data.name.toLowerCase().includes(searchName.toLowerCase()) &&data.proj.toLowerCase().includes(searchDepartment.toLowerCase()))" :span-method="arraySpanMethod" :row-class-name="tableRowClassName" border style="width: 100%" v-loading="loading">
+                        <el-table-column prop="squene" label="流水号">
+                        </el-table-column>
+                        <el-table-column prop="status" label="流程状态">
+                        </el-table-column>
                         <el-table-column prop="name" label="姓名">
                         </el-table-column>
                         <el-table-column prop="comp" label="公司">
