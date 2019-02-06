@@ -64,7 +64,7 @@ def ProcessWorkOvertimeXLS(fileName):
                         tData = (rowValue[0],rowValue[1],rowValue[2],rowValue[3],rowValue[4],rowValue[5],rowValue[6],
                                  rowValue[7],rowValue[8],rowValue[9],rowValue[10])
                         
-                        if OvertimeWorkData.has_key(rowValue[0]):
+                        if OvertimeWorkData.has_key(rowValue[2]):
                             pass
                         else:
                             OvertimeWorkData[rowValue[2]] = []
