@@ -327,10 +327,10 @@ def ProcessTaxXLS(date,fileName,userName):
                                 if info["name"] == name:
                                     yearTaxNumber = float(info["yearTaxNumber"])
                                     
-                                    if yearTaxNumber > 0:
-                                        currentNeedTaxNumber = salary
-                                    else:
-                                        currentNeedTaxNumber = 0
+                                    ##if yearTaxNumber > 0:
+                                    currentNeedTaxNumber = salary
+                                    ##else:
+                                    ##    currentNeedTaxNumber = 0
                                     yearTaxNumber = yearTaxNumber + currentNeedTaxNumber
                                     
                                     if yearTaxNumber <= 36000:

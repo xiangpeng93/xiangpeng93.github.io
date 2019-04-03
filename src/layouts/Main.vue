@@ -89,7 +89,7 @@
 				{
 					this.updateVersion()
 				}
-                this.getUserControl() 
+                //this.getUserControl() 
             },
             updateVersion(){
             //发送get请求
