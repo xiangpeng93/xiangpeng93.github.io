@@ -331,6 +331,9 @@ def ProcessTaxXLS(date,fileName,userName):
                                         currentNeedTaxNumber = salary
                                     else:
                                         currentNeedTaxNumber = 0
+                                    ## 交过税的人需要显示负数的税值
+                                    if yearTaxNumber > 0 && salary  < 0:
+                                        currentNeedTaxNumber = salary
                                     yearTaxNumber = yearTaxNumber + currentNeedTaxNumber
                                     
                                     if yearTaxNumber <= 36000:
