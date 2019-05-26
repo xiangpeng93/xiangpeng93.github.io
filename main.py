@@ -197,7 +197,8 @@ class ProcessHandler(BaseHTTPRequestHandler):
                                                                dictParam["clothingType"][0].decode('utf-8'),
                                                                dictParam["clothingSize"][0].decode('utf-8'),
                                                                dictParam["count"][0].decode('utf-8'),
-                                                               dictParam["rmb"][0].decode('utf-8')
+                                                               dictParam["rmb"][0].decode('utf-8'),
+                                                               dictParam["date"][0].decode('utf-8')
                                                                ),ensure_ascii=False)
             content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
             self.wfile.write(content)

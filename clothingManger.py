@@ -55,7 +55,7 @@ def GetClothingInfo():
     print u"»ñÈ¡·þ×°ÐÅÏ¢"
     resArray = []
     ConnectSqlite()
-    g_dict["cursor"].execute("select * from ClothingTypes order by id desc")
+    g_dict["cursor"].execute("select * from ClothingTypes order by id")
     clothingInfos = g_dict["cursor"].fetchall();
     if len(clothingInfos) == 0:
         pass
@@ -116,11 +116,14 @@ def ModClothingInfo(name,type,pic,s,m,l,xl,xxl,xxxl,xxxxl,rmb):
     g_dict["conn"].commit()
     CloseSqlite()
     return 'OK'
-def AddClothingUseInfo(name,proj,department,clothingType,sizeType,count,rmb):
+def AddClothingUseInfo(name,proj,department,clothingType,sizeType,count,rmb,date):
     if RemoveClothing(clothingType,sizeType,count) != "OK":
         return "LESS"
     ConnectSqlite()
-    date = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) 
+    if date == "None":
+        date = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) 
+    else :
+        date = date + " 00:00:00"
     args = (name,proj,department,clothingType,sizeType,count,date,rmb)
     print u"Ìí¼Ó·þ×°Ê¹ÓÃÐÅÏ¢£º",args
     g_dict["cursor"].execute("insert into ClothingUsed(name, userProj, userDepartment,clothingType,\

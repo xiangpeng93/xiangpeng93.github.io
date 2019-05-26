@@ -21,6 +21,10 @@
                             </el-option>
                         </el-select>
                     </el-form-item>
+                    <el-form-item label="领取时间">
+                            <el-date-picker value-format="yyyy-MM-dd HH:mm:ss" v-model="timeUse" type="date" placeholder="选择日期">
+                            </el-date-picker>
+                        </el-form-item>
                 </el-form>
                 <el-form :inline="true" label-width="100px">
                     <el-form-item label="物料代码">
@@ -145,6 +149,7 @@ export default {
             clothingUserProj: '',
             clothingUserDepartment: '',
             clothingType: '',
+            timeUse: '',
             sizes: [{
                 id: 1,
                 value: 'S',
@@ -198,7 +203,12 @@ export default {
     },
     methods: {
         handleBack(rowIndex, row) {
-            console.log(row);
+
+        this.$confirm('此操作将归还服装, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+        }).then(() => {
             this.$http.jsonp(this.host + "/backClothingUseInfo", {
                 params: {
                     "name": this.userName,
@@ -214,12 +224,28 @@ export default {
                 console.log(res);
                 this.clothingUseData = []
                 this.getClothingUseInfo()
+                    this.$message({
+                type: 'success',
+                message: '归还成功!'
+                });
             }, function(res) {
                 console.warn(res);
             })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消归还'
+          });          
+        });
+
+            
         },
         handleDelete(rowIndex, row) {
-            console.log(row);
+          this.$confirm('此操作将报废服装, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+        }).then(() => {
             this.$http.jsonp(this.host + "/delClothingUseInfo", {
                 params: {
                     "name": this.userName,
@@ -233,9 +259,19 @@ export default {
                 console.log(res);
                 this.clothingUseData = []
                 this.getClothingUseInfo()
+                    this.$message({
+                type: 'success',
+                message: '报废成功!'
+                });
             }, function(res) {
                 console.warn(res);
             })
+            }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消报废'
+          });          
+        });
         },
         queryUseInfo() {
             console.log(this.timeStart, this.timeEnd)
@@ -314,6 +350,7 @@ export default {
                     'clothingType': this.clothingType,
                     'clothingSize': this.clothingSize,
                     'count': this.count,
+                    'date': this.timeUse == ""?"None" : this.timeUse,
                     'rmb': this.rmb
                 }
             }).then(function(res) {
