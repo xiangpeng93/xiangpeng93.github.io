@@ -93,7 +93,7 @@ export default {
             XXXL: '0',
             XXXXL: '0',
             rmb:'0',
-            tableData: [{ 'name': "test", 'type': '1212', 'pic': '/logo.jpg' }]
+            tableData: []
         }
     },
     mounted: function() {

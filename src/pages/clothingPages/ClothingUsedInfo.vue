@@ -11,20 +11,20 @@
                     </el-form-item>
                     <el-form-item label="所属项目">
                         <el-select v-model="clothingUserProj" filterable placeholder="输入项目名称">
-                            <el-option v-for="item in userData" :key="item.id" :label="item.projName " :value="item.projName">
+                            <el-option v-for="item in tProject"  :label="item " :value="item">
                             </el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="所属部门">
                         <el-select v-model="clothingUserDepartment" filterable placeholder="输入部门信息">
-                            <el-option v-for="item in userData" :key="item.id" :label="item.department " :value="item.department">
+                            <el-option v-for="item in tDepartment" :label="item " :value="item">
                             </el-option>
                         </el-select>
                     </el-form-item>
                 </el-form>
                 <el-form :inline="true" label-width="100px">
                     <el-form-item label="物料代码">
-                        <el-select v-model="clothingType" filterable placeholder="请选择物料代码">
+                        <el-select v-model="clothingType" filterable placeholder="请选择物料代码" @change="clothTypeChange">
                             <el-option v-for="item in clothingTypeData" :key="item.id" :label="item.type +' （ '+ item.name +' ）'" :value="item.type">
                             </el-option>
                         </el-select>
@@ -37,6 +37,9 @@
                     </el-form-item>
                     <el-form-item label="领用件数">
                         <el-input v-model="count" placeholder="输入新增数量"></el-input>
+                    </el-form-item>
+                    <el-form-item label="单价">
+                        <el-input v-model="rmb" :disabled="true" placeholder="服装单价"></el-input>
                     </el-form-item>
                     <div align="right">
                         <el-button type="primary" @click='addClothingUsed'>添加领用</el-button>
@@ -57,6 +60,8 @@
                         <el-table-column prop="sizeType" label="领取型号">
                         </el-table-column>
                         <el-table-column prop="clothingCount" label="领取数量">
+                        </el-table-column>
+                        <el-table-column prop="rmb" label="单价">
                         </el-table-column>
                         <el-table-column prop="date" label="领取时间">
                         </el-table-column>
@@ -109,6 +114,8 @@
                         <el-table-column prop="sizeType" label="领取型号">
                         </el-table-column>
                         <el-table-column prop="clothingCount" label="领取数量">
+                        </el-table-column>
+                        <el-table-column prop="rmb" label="单价">
                         </el-table-column>
                         <el-table-column prop="date" label="领取时间">
                         </el-table-column>
@@ -174,9 +181,12 @@ export default {
             QueryUseInfoData: [],
             host: linkUrl["host"],
             count: '1',
+            rmb:'0',
             clothingSize: '',
             loading:true,
-            tUserData:[]
+            tUserData:[],
+            tDepartment:[],
+            tProject:[]
         }
     },
     mounted: function() {
@@ -193,6 +203,7 @@ export default {
                 params: {
                     "name": this.userName,
                     "session": this.userSession,
+                    "index": row.id,
                     "clothingUseName": row.name,
                     "clothingType": row.clothingType,
                     "clothingSize": row.sizeType,
@@ -213,6 +224,7 @@ export default {
                 params: {
                     "name": this.userName,
                     "session": this.userSession,
+                    "index": row.id,
                     "clothingUseName": row.name,
                     "clothingType": row.clothingType,
                     "time": row.date
@@ -231,8 +243,8 @@ export default {
                 params: {
                     "name": this.userName,
                     "session": this.userSession,
-                    "start": this.timeStart,
-                    "end": this.timeEnd
+                    "start": this.timeStart == ""? "None":this.timeStart ,
+                    "end": this.timeEnd == ""? "None":this.timeEnd 
                 }
             }).then(function(res) {
                 console.log(res);
@@ -240,6 +252,17 @@ export default {
             }, function(res) {
                 console.warn(res);
             })
+        },
+        clothTypeChange(type)
+        {
+            console.log("clothing type change" + type)
+            for (var item in this.clothingTypeData) {
+                console.log(this.clothingTypeData[item].type)
+                if (this.clothingTypeData[item].type == type) {
+                    this.rmb = this.clothingTypeData[item].rmb
+                    break;
+                }
+            }
         },
         userNameChange(name) {
             console.log(name);
@@ -261,6 +284,7 @@ export default {
             }).then(function(res) {
                 console.log(res);
                 this.userData = res.data;
+                this.GetProjectAndDepartment();
             }, function(res) {
                 console.warn(res);
             })
@@ -289,7 +313,8 @@ export default {
                     'clothingUserDepartment': this.clothingUserDepartment,
                     'clothingType': this.clothingType,
                     'clothingSize': this.clothingSize,
-                    'count': this.count
+                    'count': this.count,
+                    'rmb': this.rmb
                 }
             }).then(function(res) {
                 console.log(res);
@@ -341,6 +366,21 @@ export default {
             } else {
                 this.tUserData = [];
             }
+        },
+        GetProjectAndDepartment(){
+            var tempDepartment = []; 
+            var tempProj = []; 
+            for(var item in this.userData){
+                if(tempProj.indexOf(this.userData[item].projName) == -1 && this.userData[item].projName!= ""){
+                    tempProj.push(this.userData[item].projName);
+                }
+                if(tempDepartment.indexOf(this.userData[item].department) == -1  && this.userData[item].department!= ""){
+                    tempDepartment.push(this.userData[item].department);
+                }
+            }
+            this.tDepartment = tempDepartment;
+            this.tProject = tempProj;
+            return;
         },
         getCookie(c_name) {
             if (document.cookie.length > 0) {

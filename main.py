@@ -196,7 +196,8 @@ class ProcessHandler(BaseHTTPRequestHandler):
                                                                dictParam["clothingUserDepartment"][0].decode('utf-8'),
                                                                dictParam["clothingType"][0].decode('utf-8'),
                                                                dictParam["clothingSize"][0].decode('utf-8'),
-                                                               dictParam["count"][0].decode('utf-8')
+                                                               dictParam["count"][0].decode('utf-8'),
+                                                               dictParam["rmb"][0].decode('utf-8')
                                                                ),ensure_ascii=False)
             content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
             self.wfile.write(content)
@@ -232,20 +233,21 @@ class ProcessHandler(BaseHTTPRequestHandler):
             self.wfile.write(content)
         ## 查询服装使用
         elif urlResult.path == "/queryClothingUseInfo":
-            data = json.dumps(clothingManger.GetClothingUseInfoByDate(dictParam["start"][0].decode('utf-8'),
-                                                                dictParam["end"][0].decode('utf-8')),ensure_ascii=False)
+            data = json.dumps(clothingManger.GetClothingUseInfoByDate(dictParam["start"][0].decode('utf-8'),dictParam["end"][0].decode('utf-8')),ensure_ascii=False)
             content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
             self.wfile.write(content)
         ## 删除服装使用
         elif urlResult.path == "/delClothingUseInfo":
-            data = json.dumps(clothingManger.DelClothingUseInfo(dictParam["clothingUseName"][0].decode('utf-8'),
+            data = json.dumps(clothingManger.DelClothingUseInfo(dictParam["index"][0].decode('utf-8'),
+                dictParam["clothingUseName"][0].decode('utf-8'),
                                                                     dictParam["clothingType"][0].decode('utf-8'),
                                                                     dictParam["time"][0].decode('utf-8')),ensure_ascii=False)
             content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
             self.wfile.write(content)
         ## 归还服装使用
         elif urlResult.path == "/backClothingUseInfo":
-            data = json.dumps(clothingManger.BackClothingUseInfo(dictParam["clothingUseName"][0].decode('utf-8'),
+            data = json.dumps(clothingManger.BackClothingUseInfo(
+                dictParam["index"][0].decode('utf-8'),dictParam["clothingUseName"][0].decode('utf-8'),
                                                                     dictParam["clothingType"][0].decode('utf-8'),
                                                                     dictParam["clothingSize"][0].decode('utf-8'),
                                                                     dictParam["time"][0].decode('utf-8'),

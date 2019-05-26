@@ -6,7 +6,7 @@ def AddClothingNum(clothingType,size,num):
     num = int(num)
     strRet = "OK"
     args = (size,clothingType)
-    print u"服装采购 ：",args
+    print u"路镁脳掳虏脡鹿潞 拢潞",args
     clothingSizes = g_dict["cursor"].execute("select %s from ClothingTypes where  clothingType = '%s' "%args).fetchall()
     print clothingSizes
     for info in clothingSizes:
@@ -22,13 +22,13 @@ def RemoveClothing(clothingType,size,num):
     num = int(num)
     strRet = "OK"
     args = (size,clothingType)
-    print u"服装领用 ：",args
+    print u"路镁脳掳脕矛脫脙 拢潞",args
     clothingSizes = g_dict["cursor"].execute("select %s from ClothingTypes where  clothingType = '%s' "%args).fetchall()
     print clothingSizes
     for info in clothingSizes:
         currentNum = int(info[0])
         if (currentNum <= 0) or ((currentNum - num) < 0):
-            print u"库存不足"
+            print u"驴芒麓忙虏禄脳茫"
             strRet = "LESS"
         else:
             sqlInfo = "update ClothingTypes set %s = '%d' where clothingType = '%s' "\
@@ -41,7 +41,7 @@ def BackClothing(clothingType,sizeType,num):
     num = int(num)
     strRet = "OK"
     args = (sizeType,clothingType)
-    print u"服装归还 ：",args
+    print u"路镁脳掳鹿茅禄鹿 拢潞",args
     clothingSizes = g_dict["cursor"].execute("select %s from ClothingTypes where  clothingType = '%s' "%args).fetchall()
     print clothingSizes
     for info in clothingSizes:
@@ -52,7 +52,7 @@ def BackClothing(clothingType,sizeType,num):
     CloseSqlite()
     return strRet
 def GetClothingInfo():
-    print u"获取服装信息"
+    print u"禄帽脠隆路镁脳掳脨脜脧垄"
     resArray = []
     ConnectSqlite()
     g_dict["cursor"].execute("select * from ClothingTypes order by id desc")
@@ -85,7 +85,7 @@ def DelClothingInfo(name,clothingType):
     ConnectSqlite()
     strRet ="OK"
     args = (name,clothingType)
-    print u"删除服装 ：",args
+    print u"脡戮鲁媒路镁脳掳 拢潞",args
     g_dict["cursor"].execute("delete from ClothingTypes where clothingName = ?\
 and clothingType = ? ",args)
     g_dict["conn"].commit()
@@ -96,7 +96,7 @@ def CheckClothingInfo(name,clothingType):
     ConnectSqlite()
     strRet = "OK"
     args = (clothingType,)
-    print u"检查服装名称 ：",args
+    print u"录矛虏茅路镁脳掳脙没鲁脝 拢潞",args
     clothingInfos = g_dict["cursor"].execute("select * from ClothingTypes where  clothingType = ? ",args).fetchall()
     CloseSqlite()
     if len(clothingInfos) == 0:
@@ -108,7 +108,7 @@ def ModClothingInfo(name,type,pic,s,m,l,xl,xxl,xxxl,xxxxl,rmb):
         return 'FAILED'
     ConnectSqlite()
     args = (name,type,pic,s,m,l,xl,xxl,xxxl,xxxxl,rmb)
-    print u"更新服装信息：",args
+    print u"赂眉脨脗路镁脳掳脨脜脧垄拢潞",args
     g_dict["cursor"].execute("delete from ClothingTypes where clothingName = ? and clothingType = ? ",(name,type))
     g_dict["cursor"].execute("insert into ClothingTypes(clothingName, clothingType, picPath,S,\
                              M, L, XL, XXL, XXXL, XXXXL,rmb) VALUES (?, ?, ?, ?, ?,\
@@ -116,23 +116,23 @@ def ModClothingInfo(name,type,pic,s,m,l,xl,xxl,xxxl,xxxxl,rmb):
     g_dict["conn"].commit()
     CloseSqlite()
     return 'OK'
-def AddClothingUseInfo(name,proj,department,clothingType,sizeType,count):
+def AddClothingUseInfo(name,proj,department,clothingType,sizeType,count,rmb):
     if RemoveClothing(clothingType,sizeType,count) != "OK":
         return "LESS"
     ConnectSqlite()
     date = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) 
-    args = (name,proj,department,clothingType,sizeType,count,date)
-    print u"添加服装使用信息：",args
+    args = (name,proj,department,clothingType,sizeType,count,date,rmb)
+    print u"脤铆录脫路镁脳掳脢鹿脫脙脨脜脧垄拢潞",args
     g_dict["cursor"].execute("insert into ClothingUsed(name, userProj, userDepartment,clothingType,\
-                             sizeType,clothingCount,date ) VALUES (?, ?, ?, ?, ?,\
-                             ?,?)",args)
+                             sizeType,clothingCount,date,rmb) VALUES (?, ?, ?, ?, ?,\
+                             ?,?,?)",args)
     g_dict["conn"].commit()
     CloseSqlite()
     return 'OK'
 def GetClothingUseInfo():
     resArray = []
     ConnectSqlite()
-    print u"获取服装使用信息"
+    print u"禄帽脠隆路镁脳掳脢鹿脫脙脨脜脧垄"
     clothingUseInfos = g_dict["cursor"].execute("select * from ClothingUsed  order by id desc limit 50").fetchall()
     CloseSqlite()
     for info in clothingUseInfos:
@@ -145,6 +145,7 @@ def GetClothingUseInfo():
         tDict["userDepartment"] = info[5]
         tDict["clothingCount"] = info[6]
         tDict["date"] = info[7]
+        tDict["rmb"] = info[8]
         resArray.append(tDict)
     return resArray
 
@@ -152,8 +153,11 @@ def GetClothingUseInfoByDate(start,end):
     resArray = []
     ConnectSqlite()
     args = (start,end)
-    print u"通过时间查询服装使用信息",args
-    clothingUseInfos = g_dict["cursor"].execute("select * from ClothingUsed where date BETWEEN ? AND ? order by id desc",args).fetchall()
+    print u"脥篓鹿媒脢卤录盲虏茅脩炉路镁脳掳脢鹿脫脙脨脜脧垄",args
+    if(start == "None" or end == "None"):
+        clothingUseInfos = g_dict["cursor"].execute("select * from ClothingUsed order by id desc").fetchall()
+    else:
+        clothingUseInfos = g_dict["cursor"].execute("select * from ClothingUsed where date BETWEEN ? AND ? order by id desc",args).fetchall()
     CloseSqlite()
     for info in clothingUseInfos:
         tDict = {}
@@ -165,6 +169,7 @@ def GetClothingUseInfoByDate(start,end):
         tDict["userDepartment"] = info[5]
         tDict["clothingCount"] = info[6]
         tDict["date"] = info[7]
+        tDict["rmb"] = info[8]
         resArray.append(tDict)
     return resArray
 
@@ -173,7 +178,7 @@ def AddClothingInfo(name,type,pic,s,m,l,xl,xxl,xxxl,xxxxl,rmb):
         return 'FAILED'
     ConnectSqlite()
     args = (name,type,pic,s,m,l,xl,xxl,xxxl,xxxxl,rmb)
-    print u"添加服装信息：",args
+    print u"脤铆录脫路镁脳掳脨脜脧垄拢潞",args
     g_dict["cursor"].execute("insert into ClothingTypes(clothingName, clothingType, picPath,S,\
                              M, L, XL, XXL, XXXL, XXXXL,rmb) VALUES (?, ?, ?, ?, ?,\
                              ?, ?, ?, ?, ?,?)",args)
@@ -181,17 +186,17 @@ def AddClothingInfo(name,type,pic,s,m,l,xl,xxl,xxxl,xxxxl,rmb):
     CloseSqlite()
     return 'OK'
 
-def DelClothingUseInfo(name,type,time):
+def DelClothingUseInfo(index,name,type,time):
     ConnectSqlite()
-    args = (name,type,time)
-    print u"删除服装使用信息：",args
-    g_dict["cursor"].execute("delete from ClothingUsed where name=? and clothingType=? and date=?",args)
+    args = (index,name,type,time)
+    print u"脡戮鲁媒路镁脳掳脢鹿脫脙脨脜脧垄拢潞",args
+    g_dict["cursor"].execute("delete from ClothingUsed where id=? and name=? and clothingType=? and date=?",args)
     CloseSqlite()
     return 'OK'
 
-def BackClothingUseInfo(name,type,sizeType,time,num):
-    print name,type,sizeType,time,num
-    DelClothingUseInfo(name,type,time)
+def BackClothingUseInfo(index,name,type,sizeType,time,num):
+    print index,name,type,sizeType,time,num
+    DelClothingUseInfo(index,name,type,time)
     BackClothing(type,sizeType,num)
     
     return 'OK'

@@ -6,7 +6,7 @@ import os
 
 ###全局变量存储，主要是方便外部调用时关闭sqlite链接
 g_dict = {} 
-sqlitePath = os.getcwd().decode("gbk") #获取当前工作目录路径
+sqlitePath = os.getcwd()#.decode("gbk") #获取当前工作目录路径
 if( sqlitePath.rfind('\\') != -1):
     sqlitePath = sqlitePath = sqlitePath[0:sqlitePath.rfind("\\")]
     sqlitePath = sqlitePath + "\\chwy3.db"
