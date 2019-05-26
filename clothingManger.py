@@ -123,7 +123,7 @@ def AddClothingUseInfo(name,proj,department,clothingType,sizeType,count,rmb,date
     if date == "None":
         date = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) 
     else :
-        date = date + " 00:00:00"
+        date = date 
     args = (name,proj,department,clothingType,sizeType,count,date,rmb)
     print u"Ìí¼Ó·þ×°Ê¹ÓÃÐÅÏ¢£º",args
     g_dict["cursor"].execute("insert into ClothingUsed(name, userProj, userDepartment,clothingType,\
