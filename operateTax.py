@@ -327,13 +327,13 @@ def ProcessTaxXLS(date,fileName,userName):
                                 if info["name"] == name:
                                     yearTaxNumber = float(info["yearTaxNumber"])
                                     
-                                    if salary > 0:
-                                        currentNeedTaxNumber = salary
-                                    else:
-                                        currentNeedTaxNumber = 0
+                                    #if salary > 0:
+                                    currentNeedTaxNumber = salary
+                                    #else:
+                                    #    currentNeedTaxNumber = 0
                                     ## 交过税的人需要显示负数的税值
-                                    if yearTaxNumber > 0 and salary  < 0:
-                                        currentNeedTaxNumber = salary
+                                    #if yearTaxNumber > 0 and salary  < 0:
+                                    currentNeedTaxNumber = salary
                                     yearTaxNumber = yearTaxNumber + currentNeedTaxNumber
                                     
                                     if yearTaxNumber <= 36000:
@@ -352,16 +352,24 @@ def ProcessTaxXLS(date,fileName,userName):
                                         currentTax = yearTaxNumber * 0.45 - float(info["yearTax"]) -181920
                                     currentTax = _calcFourOutFiveIn(currentTax)
                                     yearTax = float(info["yearTax"])
-                                    yearTax =  yearTax + currentTax
+                                    if(yearTax <= 0):
+                                        tTax = yearTax + currentTax
+                                        yearTax = tTax
+                                        if(tTax > 0):
+                                            currentTax = tTax
+                                        else:
+                                            currentTax = 0;
+                                    else:
+                                        yearTax =  yearTax + currentTax
                                     print u"当月税金",currentTax,u"当年税金",yearTax,u"年度累计应纳税总额",yearTaxNumber
                                     break
                             pass
                         ## 不存在历史数据
                         else:
-                            if salary > 0:
-                                currentNeedTaxNumber = salary
-                            else:
-                                currentNeedTaxNumber = 0
+                            #if salary > 0:
+                            currentNeedTaxNumber = salary
+                            #else:
+                            #    currentNeedTaxNumber = 0
                             yearTaxNumber = yearTaxNumber + currentNeedTaxNumber
                             if yearTaxNumber <= 36000:
                                 currentTax = currentNeedTaxNumber * 0.03
@@ -379,7 +387,15 @@ def ProcessTaxXLS(date,fileName,userName):
                                 currentTax = (currentNeedTaxNumber) * 0.45 -181920
                             print currentTax
                             currentTax = _calcFourOutFiveIn(currentTax)
-                            yearTax =  yearTax + currentTax
+                            if(yearTax <= 0):
+                                tTax = yearTax + currentTax
+                                yearTax = tTax
+                                if(tTax > 0):
+                                    currentTax = tTax
+                                else:
+                                    currentTax = 0;
+                            else:
+                                yearTax =  yearTax + currentTax
                             print u"当月税金",currentTax,u"当年税金",yearTax,u"年度累计应纳税总额",yearTaxNumber
                             pass
                         _insertTaxInfo((name,comp,department,job,currentSalary,currentNeedTaxNumber,
