@@ -178,6 +178,14 @@ export default {
                 id: 7,
                 value: 'XXXXL',
                 label: 'XXXXL'
+            }, {
+                id: 8,
+                value: 'XXXXXL',
+                label: 'XXXXXL'
+            }, {
+                id: 9,
+                value: 'XXXXXXL',
+                label: 'XXXXXXL'
             }],
             activeName: 'first',
             clothingUseData: [],
@@ -241,7 +249,7 @@ export default {
             
         },
         handleDelete(rowIndex, row) {
-          this.$confirm('此操作将报废服装, 是否继续?', '提示', {
+        this.$confirm('此操作将报废服装, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'

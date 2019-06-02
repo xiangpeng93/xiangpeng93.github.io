@@ -37,6 +37,10 @@
                         </el-table-column>
                         <el-table-column prop="XXXXL" label="4XL码数量">
                         </el-table-column>
+                        <el-table-column prop="XXXXXL" label="5XL码数量">
+                        </el-table-column>
+                        <el-table-column prop="XXXXXXL" label="6XL码数量">
+                        </el-table-column>
                         <el-table-column prop="AllCount" label="服装总数量">
                         </el-table-column>
                         <el-table-column prop="rmb" label="单价">
@@ -92,6 +96,10 @@
                         </el-table-column>
                         <el-table-column prop="XXXXL" label="4XL码数量">
                         </el-table-column>
+                        <el-table-column prop="XXXXXL" label="5XL码数量">
+                        </el-table-column>
+                        <el-table-column prop="XXXXXXL" label="6XL码数量">
+                        </el-table-column>
                         <el-table-column prop="AllCount" label="服装总数量">
                         </el-table-column>
                          <el-table-column prop="rmb" label="单价">
@@ -138,6 +146,12 @@
                 </el-form-item>
                 <el-form-item label="XXXXL码">
                     <el-input v-model="XXXXL" placeholder="输入XXXXL码数量"></el-input>
+                </el-form-item>
+                <el-form-item label="XXXXXL码">
+                    <el-input v-model="XXXXXL" placeholder="输入XXXXXL码数量"></el-input>
+                </el-form-item>
+                <el-form-item label="XXXXXXL码">
+                    <el-input v-model="XXXXXXL" placeholder="输入XXXXXXL码数量"></el-input>
                 </el-form-item>
                 <el-form-item label="单价">
                     <el-input v-model="rmb" placeholder="输入服装单价"></el-input>
@@ -193,6 +207,16 @@ export default {
                 id: 7,
                 value: 'XXXXL',
                 label: 'XXXXL'
+            }
+            , {
+                id: 8,
+                value: 'XXXXXL',
+                label: 'XXXXXL'
+            }
+            , {
+                id: 9,
+                value: 'XXXXXXL',
+                label: 'XXXXXXL'
             }],
             activeName: 'first',
             tableData: [],
@@ -208,6 +232,8 @@ export default {
             XXL: '0',
             XXXL: '0',
             XXXXL: '0',
+            XXXXXL: '0',
+            XXXXXXL: '0',
             num: '0',
             clothingSize: ''
         }
@@ -233,6 +259,8 @@ export default {
                     'XXL': this.XXL,
                     'XXXL': this.XXXL,
                     'XXXXL': this.XXXXL,
+                    'XXXXXL': this.XXXXXL,
+                    'XXXXXXL': this.XXXXXXL,
                     'rmb':this.rmb
                 }
             }).then(function(res) {
@@ -267,6 +295,8 @@ export default {
             this.XXL = row.XXL
             this.XXXL = row.XXXL
             this.XXXXL = row.XXXXL
+            this.XXXXXL = row.XXXXXL
+            this.XXXXXXL = row.XXXXXXL
             this.clothingModName = row.name
             this.clothingModType = row.type
             this.clothingPic = row.pic

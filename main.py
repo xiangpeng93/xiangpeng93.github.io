@@ -169,7 +169,11 @@ class ProcessHandler(BaseHTTPRequestHandler):
                                                            dictParam["XXL"][0].decode('utf-8'),
                                                            dictParam["XXXL"][0].decode('utf-8'),
                                                            dictParam["XXXXL"][0].decode('utf-8'),
-                                                                                                                       dictParam["rmb"][0].decode('utf-8')
+                                                           dictParam["XXXXXL"][0].decode('utf-8'),
+                                                           dictParam["XXXXXXL"][0].decode('utf-8'),
+                                                           dictParam["rmb"][0].decode('utf-8')
+
+
                                                            ),ensure_ascii=False)
             content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
             self.wfile.write(content)
@@ -185,7 +189,10 @@ class ProcessHandler(BaseHTTPRequestHandler):
                                                            dictParam["XXL"][0].decode('utf-8'),
                                                            dictParam["XXXL"][0].decode('utf-8'),
                                                            dictParam["XXXXL"][0].decode('utf-8'),
-                                                                                                                       dictParam["rmb"][0].decode('utf-8')
+                                                           dictParam["XXXXXL"][0].decode('utf-8'),
+                                                           dictParam["XXXXXXL"][0].decode('utf-8'),
+                                                           dictParam["rmb"][0].decode('utf-8')
+
                                                            ),ensure_ascii=False)
             content = '%s(%s)'%(dictParam["callback"][0],data.encode('utf-8'))
             self.wfile.write(content)

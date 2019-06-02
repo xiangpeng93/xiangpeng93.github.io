@@ -73,6 +73,8 @@ def GetClothingInfo():
         tDict['XXXL'] = info[9]
         tDict['XXXXL'] = info[10]
         tDict['rmb'] = info[11]
+        tDict['XXXXXL'] = info[13]
+        tDict['XXXXXXL'] = info[14]
         tDict['AllCount'] = int(info[4]) + int(info[5]) \
                             +int(info[6]) +int(info[7]) \
                             +int(info[8]) +int(info[9]) \
@@ -103,16 +105,16 @@ def CheckClothingInfo(name,clothingType):
         return False
     return True
 
-def ModClothingInfo(name,type,pic,s,m,l,xl,xxl,xxxl,xxxxl,rmb):
+def ModClothingInfo(name,type,pic,s,m,l,xl,xxl,xxxl,xxxxl,xxxxxl,xxxxxxl,rmb):
     if (CheckClothingInfo(name,type)) != True:
         return 'FAILED'
     ConnectSqlite()
-    args = (name,type,pic,s,m,l,xl,xxl,xxxl,xxxxl,rmb)
+    args = (name,type,pic,s,m,l,xl,xxl,xxxl,xxxxl,rmb,xxxxxl,xxxxxxl)
     print u"¸üÐÂ·þ×°ÐÅÏ¢£º",args
     g_dict["cursor"].execute("delete from ClothingTypes where clothingName = ? and clothingType = ? ",(name,type))
     g_dict["cursor"].execute("insert into ClothingTypes(clothingName, clothingType, picPath,S,\
-                             M, L, XL, XXL, XXXL, XXXXL,rmb) VALUES (?, ?, ?, ?, ?,\
-                             ?, ?, ?, ?, ?,?)",args)
+                             M, L, XL, XXL, XXXL, XXXXL,rmb,XXXXXL, XXXXXXL) VALUES (?, ?, ?, ?, ?,\
+                             ?, ?, ?, ?, ?,?, ?,?)",args)
     g_dict["conn"].commit()
     CloseSqlite()
     return 'OK'
@@ -176,15 +178,15 @@ def GetClothingUseInfoByDate(start,end):
         resArray.append(tDict)
     return resArray
 
-def AddClothingInfo(name,type,pic,s,m,l,xl,xxl,xxxl,xxxxl,rmb):
+def AddClothingInfo(name,type,pic,s,m,l,xl,xxl,xxxl,xxxxl,xxxxxl,xxxxxxl,rmb):
     if (CheckClothingInfo(name,type)):
         return 'FAILED'
     ConnectSqlite()
-    args = (name,type,pic,s,m,l,xl,xxl,xxxl,xxxxl,rmb)
+    args = (name,type,pic,s,m,l,xl,xxl,xxxl,xxxxl,rmb,xxxxxl,xxxxxxl)
     print u"Ìí¼Ó·þ×°ÐÅÏ¢£º",args
     g_dict["cursor"].execute("insert into ClothingTypes(clothingName, clothingType, picPath,S,\
-                             M, L, XL, XXL, XXXL, XXXXL,rmb) VALUES (?, ?, ?, ?, ?,\
-                             ?, ?, ?, ?, ?,?)",args)
+                             M, L, XL, XXL, XXXL, XXXXL,rmb,XXXXXL, XXXXXXL) VALUES (?, ?, ?, ?, ?,\
+                             ?, ?, ?, ?, ?,?,?,?)",args)
     g_dict["conn"].commit()
     CloseSqlite()
     return 'OK'

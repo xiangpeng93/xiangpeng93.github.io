@@ -37,6 +37,13 @@
                     <el-form-item label="XXXXL码">
                         <el-input v-model="XXXXL" placeholder="输入XXXXL码数量"></el-input>
                     </el-form-item>
+                    <el-form-item label="XXXXXL码">
+                        <el-input v-model="XXXXXL" placeholder="输入XXXXXL码数量"></el-input>
+                    </el-form-item>
+                    <el-form-item label="XXXXXXL码">
+                        <el-input v-model="XXXXXXL" placeholder="输入XXXXXXL码数量"></el-input>
+                    </el-form-item>
+                    
                     <el-form-item label="单价">
                         <el-input v-model="rmb" placeholder="输入服装单价"></el-input>
                     </el-form-item>
@@ -92,6 +99,8 @@ export default {
             XXL: '0',
             XXXL: '0',
             XXXXL: '0',
+            XXXXXL: '0',
+            XXXXXXL: '0',
             rmb:'0',
             tableData: []
         }
@@ -103,6 +112,11 @@ export default {
     },
     methods: {
         handleDelete(index, row) {
+            this.$confirm('此操作将删除服装, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+        }).then(() => {
             this.$http.jsonp(this.host + "/delClothingInfo", {
                 params: {
                     "name": this.userName,
@@ -120,6 +134,12 @@ export default {
             }, function(res) {
                 console.warn(res);
             })
+             }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '取消删除'
+          });          
+        });
         },
         handleAvatarSuccess(response, file, fileList) {
             this.$message({
@@ -144,6 +164,8 @@ export default {
                     'XXL': this.XXL,
                     'XXXL': this.XXXL,
                     'XXXXL': this.XXXXL,
+                    'XXXXXL': this.XXXXXL,
+                    'XXXXXXL': this.XXXXXXL,
                     'rmb':this.rmb
                 }
             }).then(function(res) {
